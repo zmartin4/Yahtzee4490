@@ -2,9 +2,11 @@ package yahtzee;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 
 public class ClientGUI extends JFrame {
@@ -37,16 +39,19 @@ public class ClientGUI extends JFrame {
     LoginControl lc = new LoginControl(container, client); // Probably will want to pass in
     CreateAccountControl cac = new CreateAccountControl(container, client); // ChatClient here
     MainMenuControl mmc = new MainMenuControl(container);
+    GameControl gc = new GameControl(container, client);
 
     // ContactPanel cp = new ContactPanel(container, client);
-
-
+    Color color = new Color(215, 45, 53);
+    UIManager.getLookAndFeelDefaults().put("Panel.background", color);
+    UIManager.getLookAndFeelDefaults().put("Button.background", color.WHITE);
 
     // Create the four views. (need the controller to register with the Panels
     JPanel view1 = new InitialPanel(ic);
     JPanel view2 = new LoginPanel(lc);
     JPanel view3 = new CreateAccountPanel(cac);
     JPanel view4 = new MainMenuPanel(mmc);
+    JPanel view5 = new GamePanel(gc);
 
 
     // Add the views to the card layout container.
@@ -54,6 +59,7 @@ public class ClientGUI extends JFrame {
     container.add(view2, "2");
     container.add(view3, "3");
     container.add(view4, "4");
+    container.add(view5, "5");
 
     client.setLoginControl(lc);
     client.setCreateAccountControl(cac);
@@ -67,7 +73,7 @@ public class ClientGUI extends JFrame {
     this.add(container, BorderLayout.CENTER);
 
     // Show the JFrame.
-    this.setSize(800, 600);
+    this.setSize(1000, 800);
     this.setVisible(true);
   }
 

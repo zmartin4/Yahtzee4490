@@ -18,3 +18,6 @@
 /ServerGUI.class
 /MainMenuPanel.class
 /MainMenuControl.class
+/GameControl.class
+/GamePanel.class
+/GameData.class

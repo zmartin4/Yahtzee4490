@@ -73,7 +73,6 @@ public class LoginPanel extends JPanel {
 
     // Submit Button
     JButton submitButton = new JButton("Submit");
-    submitButton.setBackground(Color.WHITE);
     submitButton.setFont(font);
     submitButton.setPreferredSize(new Dimension(150, 40));
     submitButton.addActionListener(lc);
@@ -81,7 +80,6 @@ public class LoginPanel extends JPanel {
 
     // Cancel Button
     JButton cancelButton = new JButton("Cancel");
-    cancelButton.setBackground(Color.WHITE);
     cancelButton.addActionListener(lc);
     cancelButton.setPreferredSize(new Dimension(150, 40));
     cancelButton.setFont(font);
@@ -91,18 +89,7 @@ public class LoginPanel extends JPanel {
     JLabel logo = new JLabel("");
     ImageIcon LogoIcon = new ImageIcon(this.getClass().getResource("/yahtzee/images/logo_m.png"));
     logo.setIcon(LogoIcon);
-
-    logo.setBackground(color);
     logo.setHorizontalAlignment(JLabel.CENTER);
-
-
-    layoutPanel.setBackground(color);
-    buttonPanel.setBackground(color);
-
-    loginPanel.setBackground(color);
-    labelPanel.setBackground(color);
-    grid.setBackground(color);
-    this.setBackground(color);
 
 
 

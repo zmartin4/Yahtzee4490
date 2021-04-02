@@ -90,7 +90,6 @@ public class CreateAccountPanel extends JPanel {
 
     // Submit Button
     JButton submitButton = new JButton("Submit");
-    submitButton.setBackground(Color.WHITE);
     submitButton.setFont(font);
     submitButton.setPreferredSize(new Dimension(150, 40));
     submitButton.addActionListener(cac);
@@ -98,7 +97,7 @@ public class CreateAccountPanel extends JPanel {
 
     // Cancel Button
     JButton cancelButton = new JButton("Cancel");
-    cancelButton.setBackground(Color.WHITE);
+
     cancelButton.addActionListener(cac);
     cancelButton.setPreferredSize(new Dimension(150, 40));
     cancelButton.setFont(font);
@@ -110,13 +109,6 @@ public class CreateAccountPanel extends JPanel {
     logo.setIcon(LogoIcon);
     logo.setHorizontalAlignment(JLabel.CENTER);
 
-    // Set background colors
-    layoutPanel.setBackground(color);
-    labelPanel.setBackground(color);
-    createAccountPanel.setBackground(color);
-    buttonPanel.setBackground(color);
-    grid.setBackground(color);
-    this.setBackground(color);
 
     // Add items to layout
     grid.add(createAccountPanel);

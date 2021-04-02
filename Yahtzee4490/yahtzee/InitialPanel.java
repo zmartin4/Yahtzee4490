@@ -1,7 +1,6 @@
 package yahtzee;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -15,7 +14,6 @@ public class InitialPanel extends JPanel {
   public InitialPanel(InitialControl ic) {
 
     // Style Constants
-    Color color = new Color(215, 45, 53);
     Font buttonFont = new Font("Arial", Font.PLAIN, 28);
 
     // Layout Initialization
@@ -28,7 +26,6 @@ public class InitialPanel extends JPanel {
     JButton loginButton = new JButton("Login");
     loginButton.setFont(buttonFont);
     loginButton.setPreferredSize(new Dimension(250, 75));
-    loginButton.setBackground(Color.WHITE);
     loginButton.addActionListener(ic);
     JPanel loginButtonBuffer = new JPanel();
     loginButtonBuffer.add(loginButton);
@@ -38,7 +35,7 @@ public class InitialPanel extends JPanel {
     JButton createButton = new JButton("Create Account");
     createButton.setFont(buttonFont);
     createButton.setPreferredSize(new Dimension(250, 75));
-    createButton.setBackground(Color.WHITE);
+
     createButton.addActionListener(ic);
     JPanel createButtonBuffer = new JPanel();
     createButtonBuffer.add(createButton);
@@ -50,13 +47,6 @@ public class InitialPanel extends JPanel {
         new ImageIcon(this.getClass().getResource("/yahtzee/images/yahtzee_logo.png"));
     logo.setIcon(LogoIcon);
 
-    // Set background colors
-    layoutPanel.setBackground(color);
-    buttonPanel.setBackground(color);
-    loginButtonBuffer.setBackground(color);
-    createButtonBuffer.setBackground(color);
-    logo.setBackground(color);
-    this.setBackground(color);
 
     // add items to layouts
     layoutPanel.add(bufferPanel, BorderLayout.PAGE_START);

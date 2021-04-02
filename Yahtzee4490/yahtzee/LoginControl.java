@@ -19,6 +19,7 @@ public class LoginControl implements ActionListener {
   }
 
   // Handle button clicks.
+  @Override
   public void actionPerformed(ActionEvent ae) {
     // Get the name of the button clicked.
     String command = ae.getActionCommand();

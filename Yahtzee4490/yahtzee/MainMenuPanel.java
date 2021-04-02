@@ -32,7 +32,6 @@ public class MainMenuPanel extends JPanel {
     JButton newGameButton = new JButton("New Game");
     newGameButton.setFont(buttonFont);
     newGameButton.setPreferredSize(new Dimension(250, 75));
-    newGameButton.setBackground(Color.WHITE);
     newGameButton.addActionListener(mmc);
     JPanel newGameButtonBuffer = new JPanel();
     newGameButtonBuffer.add(newGameButton);
@@ -42,7 +41,6 @@ public class MainMenuPanel extends JPanel {
     JButton joinGameButton = new JButton("Join Game");
     joinGameButton.setFont(buttonFont);
     joinGameButton.setPreferredSize(new Dimension(250, 75));
-    joinGameButton.setBackground(Color.WHITE);
     joinGameButton.addActionListener(mmc);
     JPanel joinGameButtonBuffer = new JPanel();
     joinGameButtonBuffer.add(joinGameButton);
@@ -52,7 +50,6 @@ public class MainMenuPanel extends JPanel {
     JButton leaderboardButton = new JButton("Leaderboard");
     leaderboardButton.setFont(buttonFont);
     leaderboardButton.setPreferredSize(new Dimension(250, 75));
-    leaderboardButton.setBackground(Color.WHITE);
     leaderboardButton.addActionListener(mmc);
     JPanel leaderboardButtonBuffer = new JPanel();
     leaderboardButtonBuffer.add(leaderboardButton);
@@ -62,7 +59,6 @@ public class MainMenuPanel extends JPanel {
     JButton logoutButton = new JButton("Log Out");
     logoutButton.setFont(logoutFont);
     logoutButton.setPreferredSize(new Dimension(150, 40));
-    logoutButton.setBackground(Color.WHITE);
     logoutButton.addActionListener(mmc);
     logoutPanel.add(logoutButton);
 
@@ -73,16 +69,7 @@ public class MainMenuPanel extends JPanel {
     logo1.setIcon(LogoIcon);
     logo2.setIcon(LogoIcon);
 
-    // Set background colors
-    layoutPanel.setBackground(color);
-    buttonPanel.setBackground(color);
-    logoutPanel.setBackground(color);
-    newGameButtonBuffer.setBackground(color);
-    joinGameButtonBuffer.setBackground(color);
-    leaderboardButtonBuffer.setBackground(color);
-    logo1.setBackground(color);
-    logo2.setBackground(color);
-    this.setBackground(color);
+
 
     // add items to layouts
     layoutPanel.add(bufferPanel, BorderLayout.PAGE_START);

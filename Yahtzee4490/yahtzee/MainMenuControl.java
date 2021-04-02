@@ -20,6 +20,8 @@ public class MainMenuControl implements ActionListener {
     if (command == "New Game") {
 
     } else if (command == "Join Game") {
+      CardLayout cardLayout = (CardLayout) container.getLayout();
+      cardLayout.show(container, "5");
 
     } else if (command == "Leaderboard") {
 
