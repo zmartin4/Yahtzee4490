@@ -7,16 +7,18 @@ import javax.swing.JTextArea;
 import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
 
-public class ChatServer extends AbstractServer {
+public class YahtzeeServer extends AbstractServer {
   private JTextArea log;
   private JLabel status;
-  private DatabaseFile db = new DatabaseFile();
-
-  public ChatServer() {
+  //private Database db = new Database();
+  //I actually have the solution for the Database lab, if you need it
+  
+  
+  public YahtzeeServer() {
     super(12345);
   }
 
-  public ChatServer(int port) {
+  public YahtzeeServer(int port) {
     super(port);
   }
 
@@ -43,6 +45,9 @@ public class ChatServer extends AbstractServer {
     // TODO Auto-generated method stub
     System.out.println("Message from Client" + arg0.toString() + " ||||  " + arg1.toString());
 
+    
+    
+   
     if (arg0 instanceof LoginData) {
       LoginData loginData = (LoginData) arg0;
 
@@ -89,10 +94,20 @@ public class ChatServer extends AbstractServer {
           e.printStackTrace();
         }
       }
-
-
-
     }
+    
+    if(arg0 instanceof GameData) {
+    	
+    	GameData gameData = (GameData)arg0;
+    	
+    	//if(gameData.)
+    	//^ Not sure what to do with gameData but I'll implement more later
+    	
+    	
+    }
+    
+    //if(arg0 instanceof JoinServerData)
+    //^ We might not be doing JoinServer
 
   }
 
