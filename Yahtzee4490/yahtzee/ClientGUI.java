@@ -1,8 +1,8 @@
 package yahtzee;
 
-import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -70,11 +70,16 @@ public class ClientGUI extends JFrame {
     cardLayout.show(container, "1");
 
     // Add the card layout container to the JFrame.
-    this.add(container, BorderLayout.CENTER);
+    // this.add(container, BorderLayout.LINE_START);
+    this.add(container, FlowLayout.LEFT);
+
+
 
     // Show the JFrame.
     this.setSize(1000, 800);
     this.setVisible(true);
+    System.out.println(this.getLayout() + "   :   'this.getLayout' | In ClientGUI");
+    System.out.println(container.getLayout() + "   :   'container.getLayout' | In ClientGUI");
   }
 
   // Main function that creates the client GUI when the program is started.
