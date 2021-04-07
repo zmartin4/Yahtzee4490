@@ -10,6 +10,12 @@ import ocsf.server.ConnectionToClient;
 public class YahtzeeServer extends AbstractServer {
   private JTextArea log;
   private JLabel status;
+  private ArrayList<ConnectionToClient> clients;
+  
+  //Our dice values will be kept up with on the server
+  //When a player rolls the dice, these values will update and be sent to all players
+  private int[] diceValues = {0,0,0,0,0};
+  
   //private Database db = new Database();
   //I actually have the solution for the Database lab, if you need it
   
@@ -100,8 +106,20 @@ public class YahtzeeServer extends AbstractServer {
     	
     	GameData gameData = (GameData)arg0;
     	
-    	//if(gameData.)
-    	//^ Not sure what to do with gameData but I'll implement more later
+    	if(gameData.isRollDice()) {
+    		
+    		//updateServerDiceValues()
+    		
+    		sendToAllClients(diceValues);
+    	}
+    	
+    	
+    	//Sample command to get card values from gameData to send to all players
+    	
+    	//Essentially, what the server is doing is it will take values from gameData to transmit to all other players
+    	gameData.getCardValues();
+    	
+    	//^ Not sure what else to do with gameData but I'll implement more later
     	
     	
     }
@@ -150,6 +168,15 @@ public class YahtzeeServer extends AbstractServer {
 
   protected void clientConnected(ConnectionToClient client) {
     log.append("Client Connected \n");
+    
+    //If we aren't at the maximum amount of players, then add the client
+    if(clients.size() < 5) {
+    	clients.add(client);
+    }else {
+    	client.sendToClient("Maximum amount of players reached!");
+    }
+    
+    
   }
 
 
