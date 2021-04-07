@@ -54,5 +54,6 @@ public class InitialPanel extends JPanel {
     layoutPanel.add(logo, BorderLayout.PAGE_END);
     this.add(layoutPanel);
 
+
   }
 }
