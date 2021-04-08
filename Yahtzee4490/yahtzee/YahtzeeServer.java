@@ -108,11 +108,14 @@ public class YahtzeeServer extends AbstractServer {
     	
     	if(gameData.isRollDice()) {
     		
-    		//updateServerDiceValues()
+    		//Set server diceValues to whatever we have received from gameData
+    		this.diceValues = gameData.getDiceValues();
     		
+    		//Update all clients with the diceValues
     		sendToAllClients(diceValues);
     	}
     	
+    	//We should also have the "categories" from all players here as well
     	
     	//Sample command to get card values from gameData to send to all players
     	
@@ -172,13 +175,17 @@ public class YahtzeeServer extends AbstractServer {
     //If we aren't at the maximum amount of players, then add the client
     if(clients.size() < 5) {
     	clients.add(client);
-    }else {
-    	client.sendToClient("Maximum amount of players reached!");
-    }
-    
-    
+    }else if(clients.size() == 5) {
+    	//When the maximum amount of players joins, start the game
+    	sendToAllClients("Start game");
+    	
+    	//The first client will go, starting the game
+    	clients.get(0).sendToClient("Go");
+    	clients.get(1).sendToClient("Stop");
+    	clients.get(2).sendToClient("Stop");
+    	clients.get(3).sendToClient("Stop");
+    	clients.get(4).sendToClient("Stop");    
+  }else {
+	  client.sendToClient("Maximum amount of players reached")
   }
-
-
-
 }
