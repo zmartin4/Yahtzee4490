@@ -4,20 +4,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import javax.swing.JPanel;
 
 
 public class GameControl implements ActionListener, ItemListener {
   private JPanel container;
+  private ChatClient client;
 
   private Integer[] diceValues = new Integer[5];
   private Boolean[] rollable = new Boolean[5];
-  private Integer[] currScore = new Integer[6];
-  private Integer[] finalScore = new Integer[6];
+  private Integer[] currScore = new Integer[16];
+  private Integer[] finalScore = new Integer[16];
   private String selection = "";
-  private Boolean firstRoll = false;
+  private Boolean canRoll = false;
+  private int rollCount = 0;
 
 
   Random rand = new Random();
@@ -27,7 +31,8 @@ public class GameControl implements ActionListener, ItemListener {
   // Constructor for the login controller.
   public GameControl(JPanel container, ChatClient client) {
     this.container = container;
-
+    this.client = client;
+    Arrays.fill(finalScore, -1);
     Arrays.fill(diceValues, 1);
     Arrays.fill(rollable, true);
   }
@@ -38,12 +43,13 @@ public class GameControl implements ActionListener, ItemListener {
     String command = ae.getActionCommand();
     GamePanel gamePanel = (GamePanel) container.getComponent(4);
 
-    if (command == "Roll Dice") {
+
+    if (command == "Roll Dice" && rollCount < 3) {
       rollDice();
-      firstRoll = true;
+      rollCount++;
     }
 
-    if (firstRoll) {
+    if (rollCount > 0 && rollCount < 3) {
 
       // UPDATE EACH DICE LOCATION
       if (command == "1Keep" || command == "1Roll") {
@@ -88,16 +94,25 @@ public class GameControl implements ActionListener, ItemListener {
         }
       }
 
-
-      if (command == "Pick Category") {
-        if (selection.equals("Select Categeory"))
-          return;
-        int category = selectionTranslation(selection);
-        finalScore[category] = currScore[category];
-        gamePanel.updateUserScoreboard(currScore, category);
-        gamePanel.removeCategory(selection);
-      }
     }
+    if (command == "Pick Category" && rollCount > 0) {
+      if (selection.equals("Select Categeory"))
+        return;
+      int category = selectionTranslation(selection);
+      finalScore[category] = currScore[category];
+      gamePanel.updateUserScoreboard(currScore, finalScore, category);
+      gamePanel.removeCategory(selection);
+    }
+    GameData data = new GameData(finalScore, diceValues, rollable);
+
+
+    try {
+      client.sendToServer(data);
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
   }
 
 
@@ -129,8 +144,29 @@ public class GameControl implements ActionListener, ItemListener {
       case "Five":
         num = 4;
         break;
-      case "Sixe":
+      case "Six":
         num = 5;
+        break;
+      case "Three of a Kind":
+        num = 7;
+        break;
+      case "Four of a Kind":
+        num = 8;
+        break;
+      case "Full House":
+        num = 9;
+        break;
+      case "Small Straight":
+        num = 10;
+        break;
+      case "Large Straight":
+        num = 11;
+        break;
+      case "Yahtzee":
+        num = 12;
+        break;
+      case "Chance":
+        num = 13;
         break;
     }
     return num;
@@ -154,7 +190,7 @@ public class GameControl implements ActionListener, ItemListener {
   // Updates the dice value and dice location
   private void updateDice() {
     for (int value : diceValues) {
-      System.out.println(value);
+      // System.out.println(value);
     }
     GamePanel gamePanel = (GamePanel) container.getComponent(4);
     gamePanel.setDice1(rollable[0], diceValues[0]);
@@ -169,6 +205,8 @@ public class GameControl implements ActionListener, ItemListener {
   // Calculates the Score of the Dice and updates the GUI's Scoreboard
   private void calculateScore() {
     Arrays.fill(currScore, 0);
+
+    // Single number Scores
     for (int value : diceValues) {
       if (value == 1)
         currScore[0] = currScore[0] + 1;
@@ -183,10 +221,68 @@ public class GameControl implements ActionListener, ItemListener {
       else if (value == 6)
         currScore[5] = currScore[5] + 6;
     }
+
+    Integer[] arr = diceValues.clone();
+    Arrays.sort(arr);
+    List<Integer> list = Arrays.asList(diceValues);
+
+    int sum = 0;
+    for (int value : arr) {
+      sum += value;
+    }
+
+    // Three of a Kind, Four of a Kind, Full House
+    for (int i = 0; i < 3; i++) {
+      if (arr[i] == arr[i + 2]) { // Three of a kind
+        if (i < 2 && arr[i] == arr[i + 3]) { // Four of a kind V1
+          currScore[8] = sum;
+        } else if (i == 0 && arr[2] == arr[3]) { // Four of a kind V2
+          currScore[8] = sum;
+        } else if (i == 2 && arr[0] == arr[1]) { // Full House V1
+          currScore[9] = 25;
+        } else if (i == 0 && arr[3] == arr[4]) { // Full House V2
+          currScore[9] = 25;
+        } else {
+          currScore[7] = sum;
+        }
+      }
+    }
+
+    // Yahtzee
+    if (arr[0] == arr[4])
+      currScore[12] = 50;
+
+    // Small Straight, Large Straight
+    boolean striaght;
+    for (int i = 0; i < 3; i++) { // For all places
+      striaght = false;
+      for (int j = 1; j <= 4; j++) {// 1,2,3,4; 2,3,4,5; 3,4,5,6
+
+        if (!list.contains(i + j))
+          break;
+        if (j == 4)
+          striaght = true;
+
+      }
+      if (striaght == true) {
+        if (i < 3 && list.contains(i + 5))
+          currScore[11] = 40;
+        else
+          currScore[10] = 30;
+        break;
+
+      }
+    }
+
+
+
     GamePanel gamePanel = (GamePanel) container.getComponent(4);
-    gamePanel.updateUserScoreboard(currScore, -1);
+    gamePanel.updateUserScoreboard(currScore, finalScore, -1);
   }
 
 
-
+  public void setOpponentsInfo() {
+    GamePanel gamePanel = (GamePanel) container.getComponent(4);
+    gamePanel.updateOpponentInfo();
+  }
 }

@@ -31,6 +31,10 @@ public class GamePanel extends JPanel {
   private JButton dice5Keep = new JButton("5Keep");
   private JButton dice5Roll = new JButton("5Roll");
 
+  Integer[] playerScore = new Integer[16];
+  Integer[] diceValues = new Integer[5];
+
+
   // Faces for the dice
   private ImageIcon face1 =
       new ImageIcon(this.getClass().getResource("/yahtzee/images/face_1.png"));
@@ -48,22 +52,42 @@ public class GamePanel extends JPanel {
       new ImageIcon(this.getClass().getResource("/yahtzee/images/board_color.png"));
 
   // Creates button for each category for the user of the scoreboard
-  private JButton[] userCatButtons = new JButton[6];
+  private JButton[] userCatButtons = new JButton[16];
   private JButton oneUser = new JButton("");
   private JButton twoUser = new JButton("");
   private JButton threeUser = new JButton("");
   private JButton fourUser = new JButton("");
   private JButton fiveUser = new JButton("");
   private JButton sixUser = new JButton("");
+  private JButton bonus1User = new JButton("");
+  private JButton kind3User = new JButton("");
+  private JButton kind4User = new JButton("");
+  private JButton fhUser = new JButton("");
+  private JButton smallSUser = new JButton("");
+  private JButton largeSUser = new JButton("");
+  private JButton yahtzeeUser = new JButton("");
+  private JButton chanceUser = new JButton("");
+  private JButton bonus2User = new JButton("");
+  private JButton totalUser = new JButton("");
 
   // Creates button for each category label for the scoreboard
-  private JButton[] catButtons = new JButton[6];
+  private JButton[] catButtons = new JButton[16];
   JButton ones = new JButton("Ones");
   JButton twos = new JButton("Twos");
   JButton threes = new JButton("Threes");
   JButton fours = new JButton("Fours");
   JButton fives = new JButton("Fives");
   JButton sixes = new JButton("Sixes");
+  JButton bonus1 = new JButton("Bonus 1");
+  JButton kind3 = new JButton("Three of a Kind");
+  JButton kind4 = new JButton("Four of a Kind");
+  JButton fh = new JButton("Full House");
+  JButton smallS = new JButton("Small Straight");
+  JButton largeS = new JButton("Large Straight");
+  JButton yahtzee = new JButton("Yahtzee");
+  JButton chance = new JButton("Chance");
+  JButton bonus2 = new JButton("Bonus 2");
+  JButton total = new JButton("Total");
 
 
 
@@ -71,9 +95,10 @@ public class GamePanel extends JPanel {
   JButton rollDice = new JButton("Roll Dice");
   JButton choose = new JButton("Pick Category");
 
-  final String[] categorySelections =
-      {"One", "Two", "Three", "Four", "Five", "Six", "Select Categeory"}; // Starting category label
-                                                                          // names
+  final String[] categorySelections = {"One", "Two", "Three", "Four", "Five", "Six",
+      "Three of a Kind", "Four of a Kind", "Full House", "Small Straight", "Large Straight",
+      "Yahtzee", "Chance", "Select Categeory"}; // Starting category label names
+
   ArrayList<String> names = new ArrayList<String>();
   JComboBox pick;
 
@@ -81,7 +106,8 @@ public class GamePanel extends JPanel {
   JPanel dp = new JPanel(new GridBagLayout());
 
   // Style Constants
-  Font catFont = new Font("Arial", Font.PLAIN, 20);
+  Font catFont = new Font("Arial", Font.BOLD, 16);
+  Font scoreFont = new Font("Arial", Font.BOLD, 18);
   Color color = new Color(215, 45, 53);
   Dimension diceSize = new Dimension(70, 70);
 
@@ -122,7 +148,6 @@ public class GamePanel extends JPanel {
       keepLogo = "/yahtzee/images/board_color.png";
       rollLogo = "/yahtzee/images/face_" + value + ".png";
     }
-
     LogoIcon = new ImageIcon(this.getClass().getResource(keepLogo));
     dice2Keep.setIcon(LogoIcon);
     dice2Keep.setBorderPainted(isClickable);
@@ -170,6 +195,7 @@ public class GamePanel extends JPanel {
       rollLogo = "/yahtzee/images/face_" + value + ".png";
     }
 
+
     LogoIcon = new ImageIcon(this.getClass().getResource(keepLogo));
     dice4Keep.setIcon(LogoIcon);
     dice4Keep.setBorderPainted(isClickable);
@@ -193,6 +219,7 @@ public class GamePanel extends JPanel {
       rollLogo = "/yahtzee/images/face_" + value + ".png";
     }
 
+
     LogoIcon = new ImageIcon(this.getClass().getResource(keepLogo));
     dice5Keep.setIcon(LogoIcon);
     dice5Keep.setBorderPainted(isClickable);
@@ -214,6 +241,16 @@ public class GamePanel extends JPanel {
     catButtons[3] = fours;
     catButtons[4] = fives;
     catButtons[5] = sixes;
+    catButtons[6] = bonus1;
+    catButtons[7] = kind3;
+    catButtons[8] = kind4;
+    catButtons[9] = fh;
+    catButtons[10] = smallS;
+    catButtons[11] = largeS;
+    catButtons[12] = yahtzee;
+    catButtons[13] = chance;
+    catButtons[14] = bonus2;
+    catButtons[15] = total;
 
     // Sets the style elements for each label
     for (int i = 0; i < catButtons.length; i++) {
@@ -221,6 +258,7 @@ public class GamePanel extends JPanel {
       catButtons[i].setFocusPainted(false);
       catButtons[i].setBackground(color);
       catButtons[i].setForeground(Color.WHITE);
+      catButtons[i].setFont(catFont);
     }
 
 
@@ -231,19 +269,47 @@ public class GamePanel extends JPanel {
     userCatButtons[3] = fourUser;
     userCatButtons[4] = fiveUser;
     userCatButtons[5] = sixUser;
+    userCatButtons[6] = bonus1User;
+    userCatButtons[7] = kind3User;
+    userCatButtons[8] = kind4User;
+    userCatButtons[9] = fhUser;
+    userCatButtons[10] = smallSUser;
+    userCatButtons[11] = largeSUser;
+    userCatButtons[12] = yahtzeeUser;
+    userCatButtons[13] = chanceUser;
+    userCatButtons[14] = bonus2User;
+    userCatButtons[15] = totalUser;
+
+    for (int i = 0; i < userCatButtons.length; i++) {
+      userCatButtons[i].setFont(scoreFont);
+    }
 
     for (String categories : categorySelections)
       names.add(categories);
   }
 
   // Is called from GameControl and updates the GUI Scoreboard
-  public void updateUserScoreboard(Integer[] userScore, int selection) {
+  public void updateUserScoreboard(Integer[] userScore, Integer[] finalScore, int selection) {
 
-    for (int i = 0; i < 6; i++)
+    for (int i = 0; i < userScore.length; i++) {
       userCatButtons[i].setText(String.valueOf(userScore[i]));
+      playerScore[i] = userScore[i];
+    }
 
-    if (selection != -1)
-      userCatButtons[selection].setForeground(Color.red);
+    for (int i = 0; i < finalScore.length; i++) {
+      if (finalScore[i] != -1) {
+        userCatButtons[i].setText(String.valueOf(finalScore[i]));
+        userCatButtons[selection].setForeground(Color.red);
+        playerScore[i] = finalScore[i];
+      }
+    }
+
+
+
+  }
+
+  public void updateOpponentInfo() {
+
   }
 
   // Removes the chosen category from the JComboBox
@@ -271,8 +337,8 @@ public class GamePanel extends JPanel {
 
     // Scoreboard Panels
     JPanel scoreboardPanel = new JPanel(new GridLayout(1, 3, 10, 5));
-    JPanel categoriesPanel = new JPanel(new GridLayout(6, 0, 10, 5));
-    JPanel userScorePanel = new JPanel(new GridLayout(6, 1, 0, 0));
+    JPanel categoriesPanel = new JPanel(new GridLayout(16, 0, 10, 5));
+    JPanel userScorePanel = new JPanel(new GridLayout(16, 1, 0, 0));
     JPanel oppScorePanel = new JPanel(new GridLayout(17, 1, 0, 0));
 
     JPanel diceKeepPanel = new JPanel();
@@ -289,6 +355,17 @@ public class GamePanel extends JPanel {
     categoriesPanel.add(fours);
     categoriesPanel.add(fives);
     categoriesPanel.add(sixes);
+    categoriesPanel.add(bonus1);
+    categoriesPanel.add(kind3);
+    categoriesPanel.add(kind4);
+    categoriesPanel.add(fh);
+    categoriesPanel.add(smallS);
+    categoriesPanel.add(largeS);
+    categoriesPanel.add(yahtzee);
+    categoriesPanel.add(chance);
+    categoriesPanel.add(bonus2);
+    categoriesPanel.add(total);
+
 
 
     // User Scores for Scoreboard
@@ -298,6 +375,16 @@ public class GamePanel extends JPanel {
     userScorePanel.add(fourUser);
     userScorePanel.add(fiveUser);
     userScorePanel.add(sixUser);
+    userScorePanel.add(bonus1User);
+    userScorePanel.add(kind3User);
+    userScorePanel.add(kind4User);
+    userScorePanel.add(fhUser);
+    userScorePanel.add(smallSUser);
+    userScorePanel.add(largeSUser);
+    userScorePanel.add(yahtzeeUser);
+    userScorePanel.add(chanceUser);
+    userScorePanel.add(bonus2User);
+    userScorePanel.add(totalUser);
 
 
 

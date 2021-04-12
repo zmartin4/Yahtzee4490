@@ -78,8 +78,6 @@ public class ClientGUI extends JFrame {
     // Show the JFrame.
     this.setSize(1000, 800);
     this.setVisible(true);
-    System.out.println(this.getLayout() + "   :   'this.getLayout' | In ClientGUI");
-    System.out.println(container.getLayout() + "   :   'container.getLayout' | In ClientGUI");
   }
 
   // Main function that creates the client GUI when the program is started.
