@@ -8,6 +8,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.util.ArrayList;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -16,6 +18,8 @@ import javax.swing.JPanel;
 
 
 public class GamePanel extends JPanel {
+
+  // Dices for the rollable and non-rollable location
   private JButton dice1Keep = new JButton("1Keep");
   private JButton dice1Roll = new JButton("1Roll");
   private JButton dice2Keep = new JButton("2Keep");
@@ -27,30 +31,59 @@ public class GamePanel extends JPanel {
   private JButton dice5Keep = new JButton("5Keep");
   private JButton dice5Roll = new JButton("5Roll");
 
+  // Faces for the dice
+  private ImageIcon face1 =
+      new ImageIcon(this.getClass().getResource("/yahtzee/images/face_1.png"));
+  private ImageIcon face2 =
+      new ImageIcon(this.getClass().getResource("/yahtzee/images/face_2.png"));
+  private ImageIcon face3 =
+      new ImageIcon(this.getClass().getResource("/yahtzee/images/face_3.png"));
+  private ImageIcon face4 =
+      new ImageIcon(this.getClass().getResource("/yahtzee/images/face_4.png"));
+  private ImageIcon face5 =
+      new ImageIcon(this.getClass().getResource("/yahtzee/images/face_5.png"));
+  private ImageIcon face6 =
+      new ImageIcon(this.getClass().getResource("/yahtzee/images/face_6.png"));
+  private ImageIcon blank =
+      new ImageIcon(this.getClass().getResource("/yahtzee/images/board_color.png"));
 
-  ImageIcon face1 = new ImageIcon(this.getClass().getResource("/yahtzee/images/face_1.png"));
-  ImageIcon face2 = new ImageIcon(this.getClass().getResource("/yahtzee/images/face_2.png"));
-  ImageIcon face3 = new ImageIcon(this.getClass().getResource("/yahtzee/images/face_3.png"));
-  ImageIcon face4 = new ImageIcon(this.getClass().getResource("/yahtzee/images/face_4.png"));
-  ImageIcon face5 = new ImageIcon(this.getClass().getResource("/yahtzee/images/face_5.png"));
-  ImageIcon face6 = new ImageIcon(this.getClass().getResource("/yahtzee/images/face_6.png"));
-  ImageIcon blank = new ImageIcon(this.getClass().getResource("/yahtzee/images/board_color.png"));
+  // Creates button for each category for the user of the scoreboard
+  private JButton[] userCatButtons = new JButton[6];
+  private JButton oneUser = new JButton("");
+  private JButton twoUser = new JButton("");
+  private JButton threeUser = new JButton("");
+  private JButton fourUser = new JButton("");
+  private JButton fiveUser = new JButton("");
+  private JButton sixUser = new JButton("");
 
-  JButton[] buttons = new JButton[6];
-  JButton oneUser = new JButton("");
-  JButton twoUser = new JButton("");
-  JButton threeUser = new JButton("");
-  JButton fourUser = new JButton("");
-  JButton fiveUser = new JButton("");
-  JButton sixUser = new JButton("");
+  // Creates button for each category label for the scoreboard
+  private JButton[] catButtons = new JButton[6];
+  JButton ones = new JButton("Ones");
+  JButton twos = new JButton("Twos");
+  JButton threes = new JButton("Threes");
+  JButton fours = new JButton("Fours");
+  JButton fives = new JButton("Fives");
+  JButton sixes = new JButton("Sixes");
 
 
+
+  // Buttons for user selections
   JButton rollDice = new JButton("Roll Dice");
-
-
   JButton choose = new JButton("Pick Category");
+
+  final String[] categorySelections =
+      {"One", "Two", "Three", "Four", "Five", "Six", "Select Categeory"}; // Starting category label
+                                                                          // names
+  ArrayList<String> names = new ArrayList<String>();
+  JComboBox pick;
+
   GridBagConstraints c = new GridBagConstraints();
   JPanel dp = new JPanel(new GridBagLayout());
+
+  // Style Constants
+  Font catFont = new Font("Arial", Font.PLAIN, 20);
+  Color color = new Color(215, 45, 53);
+  Dimension diceSize = new Dimension(70, 70);
 
 
 
@@ -172,38 +205,68 @@ public class GamePanel extends JPanel {
   }
 
 
-  public void setUserBArray() {
-    buttons[0] = oneUser;
-    buttons[1] = twoUser;
-    buttons[2] = threeUser;
-    buttons[3] = fourUser;
-    buttons[4] = fiveUser;
-    buttons[5] = sixUser;
-  }
+  public void setButtonArrays() {
+
+    // Sets ButtonArray for category LABELS for the scoreboard
+    catButtons[0] = ones;
+    catButtons[1] = twos;
+    catButtons[2] = threes;
+    catButtons[3] = fours;
+    catButtons[4] = fives;
+    catButtons[5] = sixes;
+
+    // Sets the style elements for each label
+    for (int i = 0; i < catButtons.length; i++) {
+      catButtons[i].setBorderPainted(false);
+      catButtons[i].setFocusPainted(false);
+      catButtons[i].setBackground(color);
+      catButtons[i].setForeground(Color.WHITE);
+    }
 
 
-  // Enables choose button to be clicked after first roll
-  public void enableSelection() {
-    choose.setEnabled(true);
+    // Sets ButtonArray for each category SCORE for the USER
+    userCatButtons[0] = oneUser;
+    userCatButtons[1] = twoUser;
+    userCatButtons[2] = threeUser;
+    userCatButtons[3] = fourUser;
+    userCatButtons[4] = fiveUser;
+    userCatButtons[5] = sixUser;
+
+    for (String categories : categorySelections)
+      names.add(categories);
   }
 
   // Is called from GameControl and updates the GUI Scoreboard
   public void updateUserScoreboard(Integer[] userScore, int selection) {
-    // oneUser.setText(String.valueOf(userScore[0]));
 
     for (int i = 0; i < 6; i++)
-      buttons[i].setText(String.valueOf(userScore[i]));
+      userCatButtons[i].setText(String.valueOf(userScore[i]));
 
     if (selection != -1)
-      buttons[selection].setForeground(Color.red);
+      userCatButtons[selection].setForeground(Color.red);
+  }
+
+  // Removes the chosen category from the JComboBox
+  public void removeCategory(String selection) {
+
+    DefaultComboBoxModel model = (DefaultComboBoxModel) pick.getModel();
+    String toRemove = "";
+    for (String cat : names) {
+      if (cat.equals(selection))
+        toRemove = selection;
+    }
+    names.remove(toRemove);
+    model.removeAllElements();
+    for (String cat : names)
+      model.addElement(cat);
+
+    pick.setModel(model);
+    pick.setSelectedIndex(names.size() - 1);
+
   }
 
   public GamePanel(GameControl gc) {
-    // Style Constants
-    Font catFont = new Font("Arial", Font.PLAIN, 20);
-    Color color = new Color(215, 45, 53);
-    Dimension diceSize = new Dimension(70, 70);
-    setUserBArray();
+    setButtonArrays();
 
 
     // Scoreboard Panels
@@ -218,49 +281,13 @@ public class GamePanel extends JPanel {
     JPanel layoutPanel = new JPanel(new BorderLayout());
 
 
-    //////////////////////////////////////
-    /* Categories Labels for Scoreboard */
-    //////////////////////////////////////
-    JButton ones = new JButton("Ones");
-    ones.setBorderPainted(false);
-    ones.setFocusPainted(false);
-    ones.setBackground(color);
-    ones.setForeground(color.WHITE);
+
+    // Category Labels for Scoreboard
     categoriesPanel.add(ones);
-
-    JButton twos = new JButton("Twos");
-    twos.setBorderPainted(false);
-    twos.setFocusPainted(false);
-    twos.setBackground(color);
-    twos.setForeground(color.WHITE);
     categoriesPanel.add(twos);
-
-    JButton threes = new JButton("Threes");
-    threes.setBorderPainted(false);
-    threes.setFocusPainted(false);
-    threes.setBackground(color);
-    threes.setForeground(color.WHITE);
     categoriesPanel.add(threes);
-
-    JButton fours = new JButton("Fours");
-    fours.setBorderPainted(false);
-    fours.setFocusPainted(false);
-    fours.setBackground(color);
-    fours.setForeground(color.WHITE);
     categoriesPanel.add(fours);
-
-    JButton fives = new JButton("Fives");
-    fives.setBorderPainted(false);
-    fives.setFocusPainted(false);
-    fives.setBackground(color);
-    fives.setForeground(color.WHITE);
     categoriesPanel.add(fives);
-
-    JButton sixes = new JButton("Sixes");
-    sixes.setBorderPainted(false);
-    sixes.setFocusPainted(false);
-    sixes.setBackground(color);
-    sixes.setForeground(color.WHITE);
     categoriesPanel.add(sixes);
 
 
@@ -382,27 +409,12 @@ public class GamePanel extends JPanel {
     rollDice.addActionListener(gc);
 
     choose = new JButton("Pick Category");
-    choose.setEnabled(false);
     choose.addActionListener(gc);
 
 
-    String[] categorySelections = {"One", "Two", "Three", "Four", "Five", "Six"};
-    JComboBox pick = new JComboBox(categorySelections);
+    pick = new JComboBox(names.toArray());
     pick.addItemListener(gc);
-
-
-
-    /*
-     * JButton dice1Roll = new JButton("1"); dice1Roll.setPreferredSize(new Dimension(70, 70));
-     * diceRollPanel.add(dice1Roll); JButton dice2Roll = new JButton("2");
-     * dice2Roll.setPreferredSize(new Dimension(70, 70)); diceRollPanel.add(dice2Roll); JButton
-     * dice3Roll = new JButton("3"); dice3Roll.setPreferredSize(new Dimension(70, 70));
-     * diceRollPanel.add(dice3Roll); JButton dice4Roll = new JButton("4");
-     * dice4Roll.setPreferredSize(new Dimension(70, 70)); diceRollPanel.add(dice4Roll); JButton
-     * dice5Roll = new JButton("5"); dice5Roll.setPreferredSize(new Dimension(70, 70));
-     * diceRollPanel.add(dice5Roll); JButton dice6Roll = new JButton("6");
-     * dice6Roll.setPreferredSize(new Dimension(70, 70)); diceRollPanel.add(dice6Roll);
-     */
+    pick.setSelectedIndex(names.size() - 1);
 
 
 
@@ -446,4 +458,8 @@ public class GamePanel extends JPanel {
 
 
   }
+
+
+
 }
+

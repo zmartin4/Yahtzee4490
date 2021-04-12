@@ -17,6 +17,7 @@ public class GameControl implements ActionListener, ItemListener {
   private Integer[] currScore = new Integer[6];
   private Integer[] finalScore = new Integer[6];
   private String selection = "";
+  private Boolean firstRoll = false;
 
 
   Random rand = new Random();
@@ -37,57 +38,65 @@ public class GameControl implements ActionListener, ItemListener {
     String command = ae.getActionCommand();
     GamePanel gamePanel = (GamePanel) container.getComponent(4);
 
-    // UPDATE EACH DICE LOCATION
-    if (command == "1Keep" || command == "1Roll") {
-      if (command == "1Keep") {
-        gamePanel.setDice1(true, diceValues[0]);
-        rollable[0] = true;
-      } else {
-        gamePanel.setDice1(false, diceValues[0]);
-        rollable[0] = false;
-      }
-    } else if (command == "2Keep" || command == "2Roll") {
-      if (command == "2Keep") {
-        gamePanel.setDice2(true, diceValues[1]);
-        rollable[1] = true;
-      } else {
-        gamePanel.setDice2(false, diceValues[1]);
-        rollable[1] = false;
-      }
-    } else if (command == "3Keep" || command == "3Roll") {
-      if (command == "3Keep") {
-        gamePanel.setDice3(true, diceValues[2]);
-        rollable[2] = true;
-      } else {
-        gamePanel.setDice3(false, diceValues[2]);
-        rollable[2] = false;
-      }
-    } else if (command == "4Keep" || command == "4Roll") {
-      if (command == "4Keep") {
-        gamePanel.setDice4(true, diceValues[3]);
-        rollable[3] = true;
-      } else {
-        gamePanel.setDice4(false, diceValues[3]);
-        rollable[3] = false;
-      }
-    } else if (command == "5Keep" || command == "5Roll") {
-      if (command == "5Keep") {
-        gamePanel.setDice5(true, diceValues[4]);
-        rollable[4] = true;
-      } else {
-        gamePanel.setDice5(false, diceValues[4]);
-        rollable[4] = false;
-      }
-    }
-
     if (command == "Roll Dice") {
       rollDice();
-      gamePanel.enableSelection();
+      firstRoll = true;
     }
-    if (command == "Pick Category") {
-      int category = selectionTranslation(selection);
-      finalScore[category] = currScore[category];
-      gamePanel.updateUserScoreboard(currScore, category);
+
+    if (firstRoll) {
+
+      // UPDATE EACH DICE LOCATION
+      if (command == "1Keep" || command == "1Roll") {
+        if (command == "1Keep") {
+          gamePanel.setDice1(true, diceValues[0]);
+          rollable[0] = true;
+        } else {
+          gamePanel.setDice1(false, diceValues[0]);
+          rollable[0] = false;
+        }
+      } else if (command == "2Keep" || command == "2Roll") {
+        if (command == "2Keep") {
+          gamePanel.setDice2(true, diceValues[1]);
+          rollable[1] = true;
+        } else {
+          gamePanel.setDice2(false, diceValues[1]);
+          rollable[1] = false;
+        }
+      } else if (command == "3Keep" || command == "3Roll") {
+        if (command == "3Keep") {
+          gamePanel.setDice3(true, diceValues[2]);
+          rollable[2] = true;
+        } else {
+          gamePanel.setDice3(false, diceValues[2]);
+          rollable[2] = false;
+        }
+      } else if (command == "4Keep" || command == "4Roll") {
+        if (command == "4Keep") {
+          gamePanel.setDice4(true, diceValues[3]);
+          rollable[3] = true;
+        } else {
+          gamePanel.setDice4(false, diceValues[3]);
+          rollable[3] = false;
+        }
+      } else if (command == "5Keep" || command == "5Roll") {
+        if (command == "5Keep") {
+          gamePanel.setDice5(true, diceValues[4]);
+          rollable[4] = true;
+        } else {
+          gamePanel.setDice5(false, diceValues[4]);
+          rollable[4] = false;
+        }
+      }
+
+
+      if (command == "Pick Category") {
+        if (selection.equals("Select Categeory"))
+          return;
+        int category = selectionTranslation(selection);
+        finalScore[category] = currScore[category];
+        gamePanel.updateUserScoreboard(currScore, category);
+        gamePanel.removeCategory(selection);
+      }
     }
   }
 
@@ -96,12 +105,14 @@ public class GameControl implements ActionListener, ItemListener {
   @Override
   public void itemStateChanged(ItemEvent arg0) {
     selection = (String) arg0.getItem();
+
   }
 
 
-  // Translates the Category selection into an int that corrlates to JButton Array
+  // Translates the Category selection into an int that correlates to JButton Array
   private int selectionTranslation(String cat) {
     int num = -1;
+    System.out.println(cat);
     switch (cat) {
       case "One":
         num = 0;
