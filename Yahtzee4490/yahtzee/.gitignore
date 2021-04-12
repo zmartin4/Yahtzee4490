@@ -21,3 +21,5 @@
 /GameControl.class
 /GamePanel.class
 /GameData.class
+/GameControl$Dice.class
+/GamePanel$Buttons.class
