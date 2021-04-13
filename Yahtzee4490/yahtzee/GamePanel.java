@@ -3,6 +3,7 @@ package yahtzee;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -31,8 +32,6 @@ public class GamePanel extends JPanel {
   private JButton dice5Keep = new JButton("5Keep");
   private JButton dice5Roll = new JButton("5Roll");
 
-  Integer[] playerScore = new Integer[16];
-  Integer[] diceValues = new Integer[5];
 
 
   // Faces for the dice
@@ -92,22 +91,27 @@ public class GamePanel extends JPanel {
 
 
   // Buttons for user selections
-  JButton rollDice = new JButton("Roll Dice");
-  JButton choose = new JButton("Pick Category");
+  JButton rollDice;
+  JButton chooseCategory;
+  JButton quitButton;
+  JComboBox pickCategory;
 
-  final String[] categorySelections = {"One", "Two", "Three", "Four", "Five", "Six",
+  ArrayList<String> categorySelection = new ArrayList<String>();
+
+  final String[] categorySelectionsFINAL = {"One", "Two", "Three", "Four", "Five", "Six",
       "Three of a Kind", "Four of a Kind", "Full House", "Small Straight", "Large Straight",
       "Yahtzee", "Chance", "Select Categeory"}; // Starting category label names
 
-  ArrayList<String> names = new ArrayList<String>();
-  JComboBox pick;
 
-  GridBagConstraints c = new GridBagConstraints();
-  JPanel dp = new JPanel(new GridBagLayout());
+
+  GridBagConstraints catC = new GridBagConstraints();
+  JPanel catP = new JPanel(new GridBagLayout());
+
+
 
   // Style Constants
-  Font catFont = new Font("Arial", Font.BOLD, 16);
-  Font scoreFont = new Font("Arial", Font.BOLD, 18);
+  Font catFont = new Font("Arial", Font.BOLD, 20);
+  Font buttonFont = new Font("Arial", Font.BOLD, 32);
   Color color = new Color(215, 45, 53);
   Dimension diceSize = new Dimension(70, 70);
 
@@ -127,14 +131,13 @@ public class GamePanel extends JPanel {
 
     LogoIcon = new ImageIcon(this.getClass().getResource(keepLogo));
     dice1Keep.setIcon(LogoIcon);
-    dice1Keep.setBorderPainted(isClickable);
-    dice1Keep.setFocusPainted(isClickable);
+    dice1Keep.setDisabledIcon(LogoIcon);
+    dice1Keep.setEnabled(isClickable);
 
     LogoIcon = new ImageIcon(this.getClass().getResource(rollLogo));
     dice1Roll.setIcon(LogoIcon);
-    dice1Roll.setBorderPainted(!isClickable);
-    dice1Roll.setFocusPainted(!isClickable);
-
+    dice1Roll.setDisabledIcon(LogoIcon);
+    dice1Roll.setEnabled(!isClickable);
   }
 
   public void setDice2(boolean rollable, int value) {
@@ -150,13 +153,14 @@ public class GamePanel extends JPanel {
     }
     LogoIcon = new ImageIcon(this.getClass().getResource(keepLogo));
     dice2Keep.setIcon(LogoIcon);
-    dice2Keep.setBorderPainted(isClickable);
-    dice2Keep.setFocusPainted(isClickable);
+    dice2Keep.setDisabledIcon(LogoIcon);
+    dice2Keep.setEnabled(isClickable);
 
     LogoIcon = new ImageIcon(this.getClass().getResource(rollLogo));
     dice2Roll.setIcon(LogoIcon);
-    dice2Roll.setBorderPainted(!isClickable);
-    dice2Roll.setFocusPainted(!isClickable);
+    dice2Roll.setDisabledIcon(LogoIcon);
+    dice2Roll.setEnabled(!isClickable);
+
 
   }
 
@@ -174,13 +178,14 @@ public class GamePanel extends JPanel {
 
     LogoIcon = new ImageIcon(this.getClass().getResource(keepLogo));
     dice3Keep.setIcon(LogoIcon);
-    dice3Keep.setBorderPainted(isClickable);
-    dice3Keep.setFocusPainted(isClickable);
+    dice3Keep.setDisabledIcon(LogoIcon);
+    dice3Keep.setEnabled(isClickable);
 
     LogoIcon = new ImageIcon(this.getClass().getResource(rollLogo));
     dice3Roll.setIcon(LogoIcon);
-    dice3Roll.setBorderPainted(!isClickable);
-    dice3Roll.setFocusPainted(!isClickable);
+    dice3Roll.setDisabledIcon(LogoIcon);
+    dice3Roll.setEnabled(!isClickable);
+
   }
 
   public void setDice4(boolean rollable, int value) {
@@ -194,17 +199,16 @@ public class GamePanel extends JPanel {
       keepLogo = "/yahtzee/images/board_color.png";
       rollLogo = "/yahtzee/images/face_" + value + ".png";
     }
-
-
     LogoIcon = new ImageIcon(this.getClass().getResource(keepLogo));
     dice4Keep.setIcon(LogoIcon);
-    dice4Keep.setBorderPainted(isClickable);
-    dice4Keep.setFocusPainted(isClickable);
+    dice4Keep.setDisabledIcon(LogoIcon);
+    dice4Keep.setEnabled(isClickable);
 
     LogoIcon = new ImageIcon(this.getClass().getResource(rollLogo));
     dice4Roll.setIcon(LogoIcon);
-    dice4Roll.setBorderPainted(!isClickable);
-    dice4Roll.setFocusPainted(!isClickable);
+    dice4Roll.setDisabledIcon(LogoIcon);
+    dice4Roll.setEnabled(!isClickable);
+
   }
 
   public void setDice5(boolean rollable, int value) {
@@ -218,21 +222,20 @@ public class GamePanel extends JPanel {
       keepLogo = "/yahtzee/images/board_color.png";
       rollLogo = "/yahtzee/images/face_" + value + ".png";
     }
-
-
     LogoIcon = new ImageIcon(this.getClass().getResource(keepLogo));
     dice5Keep.setIcon(LogoIcon);
-    dice5Keep.setBorderPainted(isClickable);
-    dice5Keep.setFocusPainted(isClickable);
+    dice5Keep.setDisabledIcon(LogoIcon);
+    dice5Keep.setEnabled(isClickable);
 
     LogoIcon = new ImageIcon(this.getClass().getResource(rollLogo));
     dice5Roll.setIcon(LogoIcon);
-    dice5Roll.setBorderPainted(!isClickable);
-    dice5Roll.setFocusPainted(!isClickable);
+    dice5Roll.setDisabledIcon(LogoIcon);
+    dice5Roll.setEnabled(!isClickable);
+
   }
 
-
-  public void setButtonArrays() {
+  // Initalization to Arrays for easier manipulation
+  public void setScoreboardButtons() {
 
     // Sets ButtonArray for category LABELS for the scoreboard
     catButtons[0] = ones;
@@ -280,32 +283,27 @@ public class GamePanel extends JPanel {
     userCatButtons[14] = bonus2User;
     userCatButtons[15] = totalUser;
 
-    for (int i = 0; i < userCatButtons.length; i++) {
-      userCatButtons[i].setFont(scoreFont);
-    }
+    for (int i = 0; i < userCatButtons.length; i++)
+      userCatButtons[i].setFont(catFont);
 
-    for (String categories : categorySelections)
-      names.add(categories);
+    for (String categories : categorySelectionsFINAL)
+      categorySelection.add(categories);
   }
 
   // Is called from GameControl and updates the GUI Scoreboard
   public void updateUserScoreboard(Integer[] userScore, Integer[] finalScore, int selection) {
 
-    for (int i = 0; i < userScore.length; i++) {
+    // Add all scores to userScoreboard
+    for (int i = 0; i < userScore.length; i++)
       userCatButtons[i].setText(String.valueOf(userScore[i]));
-      playerScore[i] = userScore[i];
-    }
 
+    // Overrides and adds previously selected categories
     for (int i = 0; i < finalScore.length; i++) {
       if (finalScore[i] != -1) {
         userCatButtons[i].setText(String.valueOf(finalScore[i]));
         userCatButtons[selection].setForeground(Color.red);
-        playerScore[i] = finalScore[i];
       }
     }
-
-
-
   }
 
   public void updateOpponentInfo() {
@@ -313,39 +311,48 @@ public class GamePanel extends JPanel {
   }
 
   // Removes the chosen category from the JComboBox
-  public void removeCategory(String selection) {
+  public void removeCategorySelection(String selection) {
 
-    DefaultComboBoxModel model = (DefaultComboBoxModel) pick.getModel();
+    DefaultComboBoxModel model = (DefaultComboBoxModel) pickCategory.getModel();
     String toRemove = "";
-    for (String cat : names) {
+    for (String cat : categorySelection) {
       if (cat.equals(selection))
         toRemove = selection;
     }
-    names.remove(toRemove);
+    categorySelection.remove(toRemove);
     model.removeAllElements();
-    for (String cat : names)
+    for (String cat : categorySelection)
       model.addElement(cat);
 
-    pick.setModel(model);
-    pick.setSelectedIndex(names.size() - 1);
+    pickCategory.setModel(model);
+    pickCategory.setSelectedIndex(categorySelection.size() - 1);
 
   }
 
   public GamePanel(GameControl gc) {
-    setButtonArrays();
+    setScoreboardButtons();
 
+    // Overall Panel
+    JPanel layoutPanel = new JPanel(new BorderLayout(50, 25));
 
     // Scoreboard Panels
-    JPanel scoreboardPanel = new JPanel(new GridLayout(1, 3, 10, 5));
-    JPanel categoriesPanel = new JPanel(new GridLayout(16, 0, 10, 5));
-    JPanel userScorePanel = new JPanel(new GridLayout(16, 1, 0, 0));
+    JPanel scoreboardPanel = new JPanel(new GridLayout(1, 3, 10, 0));
+    JPanel categoriesPanel = new JPanel(new GridLayout(17, 0, 10, 5));
+    JPanel userScorePanel = new JPanel(new GridLayout(17, 1, 0, 5));
     JPanel oppScorePanel = new JPanel(new GridLayout(17, 1, 0, 0));
 
-    JPanel diceKeepPanel = new JPanel();
-    JPanel diceRollPanel = new JPanel();
-    JPanel leftPanel = new JPanel();
-    JPanel layoutPanel = new JPanel(new BorderLayout());
+    JPanel quitPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
+    // Dice Interaction Panel
+    JPanel playPanel = new JPanel(new BorderLayout());
+    JPanel diceControlPanel = new JPanel();
+    GridBagConstraints c = new GridBagConstraints();
+    JPanel dicePanel = new JPanel(new GridBagLayout());
+
+    scoreboardPanel.setBackground(color.LIGHT_GRAY);
+    categoriesPanel.setBackground(color.LIGHT_GRAY);
+    userScorePanel.setBackground(color.LIGHT_GRAY);
+    oppScorePanel.setBackground(color.LIGHT_GRAY);
 
 
     // Category Labels for Scoreboard
@@ -396,13 +403,13 @@ public class GamePanel extends JPanel {
     dice1Keep.setBorderPainted(false);
     dice1Keep.setFocusPainted(false);
     dice1Keep.setIcon(blank);
-    dice1Keep.setIconTextGap(-5);
+    dice1Keep.setIconTextGap(-6);
 
     dice1Roll.setPreferredSize(diceSize);
     dice1Roll.addActionListener(gc);
     dice1Roll.setBorderPainted(false);
     dice1Roll.setFocusPainted(false);
-    dice1Roll.setIconTextGap(-5);
+    dice1Roll.setIconTextGap(-6);
     dice1Roll.setIcon(face1);
 
 
@@ -411,7 +418,7 @@ public class GamePanel extends JPanel {
     dice2Keep.setBorderPainted(false);
     dice2Keep.setFocusPainted(false);
     dice2Keep.setIcon(blank);
-    dice2Keep.setIconTextGap(-5);
+    dice2Keep.setIconTextGap(-6);
 
 
     dice2Roll.setPreferredSize(diceSize);
@@ -419,49 +426,50 @@ public class GamePanel extends JPanel {
     dice2Roll.setBorderPainted(false);
     dice2Roll.setFocusPainted(false);
     dice2Roll.setIcon(face1);
-    dice2Roll.setIconTextGap(-5);
+    dice2Roll.setIconTextGap(-6);
 
     dice3Keep.setPreferredSize(diceSize);
     dice3Keep.addActionListener(gc);
     dice3Keep.setBorderPainted(false);
     dice3Keep.setFocusPainted(false);
     dice3Keep.setIcon(blank);
-    dice3Keep.setIconTextGap(-5);
+    dice3Keep.setIconTextGap(-6);
 
     dice3Roll.setPreferredSize(diceSize);
     dice3Roll.addActionListener(gc);
     dice3Roll.setBorderPainted(false);
     dice3Roll.setFocusPainted(false);
     dice3Roll.setIcon(face1);
-    dice3Roll.setIconTextGap(-5);
+    dice3Roll.setIconTextGap(-6);
 
     dice4Keep.setPreferredSize(diceSize);
     dice4Keep.addActionListener(gc);
     dice4Keep.setBorderPainted(false);
     dice4Keep.setFocusPainted(false);
     dice4Keep.setIcon(blank);
-    dice4Keep.setIconTextGap(-5);
+    dice4Keep.setIconTextGap(-6);
 
     dice4Roll.setPreferredSize(diceSize);
     dice4Roll.addActionListener(gc);
     dice4Roll.setBorderPainted(false);
     dice4Roll.setFocusPainted(false);
     dice4Roll.setIcon(face1);
-    dice4Roll.setIconTextGap(-5);
+    dice4Roll.setIconTextGap(-6);
 
     dice5Keep.setPreferredSize(diceSize);
     dice5Keep.addActionListener(gc);
     dice5Keep.setBorderPainted(false);
     dice5Keep.setFocusPainted(false);
     dice5Keep.setIcon(blank);
-    dice5Keep.setIconTextGap(-5);
+    dice5Keep.setIconTextGap(-6);
 
     dice5Roll.setPreferredSize(diceSize);
     dice5Roll.addActionListener(gc);
     dice5Roll.setBorderPainted(false);
     dice5Roll.setFocusPainted(false);
     dice5Roll.setIcon(face1);
-    dice5Roll.setIconTextGap(-5);
+    dice5Roll.setIconTextGap(-6);
+
 
 
     ////////////////////////////////////////
@@ -469,84 +477,74 @@ public class GamePanel extends JPanel {
     ////////////////////////////////////////
     c.gridx = 0;
     c.gridy = 0;
-    c.insets = new Insets(10, 0, 0, 0);
-    dp.add(dice1Roll, c);
+    c.insets = new Insets(0, 20, 0, 20);
+    dicePanel.add(dice1Roll, c);
     c.gridx = 1;
-    dp.add(dice2Roll, c);
+    dicePanel.add(dice2Roll, c);
     c.gridx = 2;
-    dp.add(dice3Roll, c);
+    dicePanel.add(dice3Roll, c);
     c.gridx = 3;
-    dp.add(dice4Roll, c);
+    dicePanel.add(dice4Roll, c);
     c.gridx = 4;
-    dp.add(dice5Roll, c);
+    dicePanel.add(dice5Roll, c);
 
     c.gridx = 0;
     c.gridy = 1;
-    dp.add(dice1Keep, c);
+    c.insets = new Insets(100, 20, 0, 20);
+    dicePanel.add(dice1Keep, c);
     c.gridx = 1;
-    dp.add(dice2Keep, c);
+    dicePanel.add(dice2Keep, c);
     c.gridx = 2;
-    dp.add(dice3Keep, c);
+    dicePanel.add(dice3Keep, c);
     c.gridx = 3;
-    dp.add(dice4Keep, c);
+    dicePanel.add(dice4Keep, c);
     c.gridx = 4;
-    dp.add(dice5Keep, c);
+    dicePanel.add(dice5Keep, c);
+
+
+    quitButton = new JButton("Quit Game");
+    quitButton.addActionListener(gc);
 
     rollDice = new JButton("Roll Dice");
     rollDice.addActionListener(gc);
+    rollDice.setPreferredSize(new Dimension(0, 75));
+    rollDice.setFont(buttonFont);
 
-    choose = new JButton("Pick Category");
-    choose.addActionListener(gc);
+    pickCategory = new JComboBox(categorySelection.toArray());
+    pickCategory.addItemListener(gc);
+    pickCategory.setSelectedIndex(categorySelection.size() - 1);
+    pickCategory.setPreferredSize(new Dimension(200, 40));
+    pickCategory.setFont(catFont);
+
+    chooseCategory = new JButton("Pick Category");
+    chooseCategory.addActionListener(gc);
+    chooseCategory.setPreferredSize(new Dimension(200, 40));
+    chooseCategory.setFont(catFont);
 
 
-    pick = new JComboBox(names.toArray());
-    pick.addItemListener(gc);
-    pick.setSelectedIndex(names.size() - 1);
-
-
-
-    // for visual TESTING
-    scoreboardPanel.setBackground(color.WHITE);
-    userScorePanel.setBackground(color.DARK_GRAY);
-    oppScorePanel.setBackground(color.orange);
-    leftPanel.setBackground(color.black);
 
     // adding sections to the scoreboard
     scoreboardPanel.add(categoriesPanel);
     scoreboardPanel.add(userScorePanel);
     scoreboardPanel.add(oppScorePanel);
+    quitPanel.add(quitButton);
 
-    // natural height, maximum width
+    // add dice selection
+    diceControlPanel.setPreferredSize(new Dimension(1, 100));
+    diceControlPanel.add(pickCategory);
+    diceControlPanel.add(chooseCategory);
 
-    /*
-     * GridBagConstraints c = new GridBagConstraints(); JButton button = new JButton("Button 2");
-     * c.fill = GridBagConstraints.HORIZONTAL; c.weightx = 0.5; c.gridx = 0; c.gridy = 0; //
-     * layoutPanel.add(button, c); this.add(button, FlowLayout.LEFT); button = new
-     * JButton("Button 3"); c.fill = GridBagConstraints.HORIZONTAL; c.weightx = 0.5; c.gridx = 1;
-     * c.gridy = 0; // layoutPanel.add(button, c); this.add(button, FlowLayout.LEFT);
-     */
+    // add dice interaction
+    playPanel.add(rollDice, BorderLayout.PAGE_START);
+    playPanel.add(dicePanel, BorderLayout.LINE_END);
+    playPanel.add(diceControlPanel, BorderLayout.PAGE_END);
 
-    layoutPanel.add(scoreboardPanel);
-    // layoutPanel.add(a);
-    // layoutPanel.add(b);
-    // layoutPanel.add(new JSeparator(), BorderLayout.CENTER);
-    // layoutPanel.add(a, BorderLayout.CENTER);
-    // layoutPanel.add(b, BorderLayout.PAGE_END);
-    // this.add(button, c);
-    this.setBackground(color.blue);
+    // add all panels
+    layoutPanel.add(quitPanel, BorderLayout.PAGE_START);
+    layoutPanel.add(scoreboardPanel, BorderLayout.CENTER);
+    layoutPanel.add(playPanel, BorderLayout.LINE_END);
+
     this.add(layoutPanel);
-    this.add(diceKeepPanel);
-    this.add(diceRollPanel);
-    this.add(dp);
-    this.add(rollDice);
-    this.add(pick);
-    this.add(choose);
-
-
-
   }
-
-
-
 }
 

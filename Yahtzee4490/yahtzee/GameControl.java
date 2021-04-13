@@ -20,13 +20,12 @@ public class GameControl implements ActionListener, ItemListener {
   private Integer[] currScore = new Integer[16];
   private Integer[] finalScore = new Integer[16];
   private String selection = "";
-  private Boolean canRoll = false;
+
   private int rollCount = 0;
+  boolean sendData = true;
 
 
   Random rand = new Random();
-
-
 
   // Constructor for the login controller.
   public GameControl(JPanel container, ChatClient client) {
@@ -95,22 +94,36 @@ public class GameControl implements ActionListener, ItemListener {
       }
 
     }
+
+    // Updates the final score and sends data to server
     if (command == "Pick Category" && rollCount > 0) {
       if (selection.equals("Select Categeory"))
         return;
       int category = selectionTranslation(selection);
       finalScore[category] = currScore[category];
       gamePanel.updateUserScoreboard(currScore, finalScore, category);
-      gamePanel.removeCategory(selection);
+      gamePanel.removeCategorySelection(selection);
+
+      GameData data = new GameData(finalScore, diceValues, rollable);
+      try {
+        client.sendToServer(data);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
-    GameData data = new GameData(finalScore, diceValues, rollable);
 
+    // sends data to server
+    if (rollCount > 0 && sendData) {
+      GameData data = new GameData(finalScore, diceValues, rollable);
+      try {
+        client.sendToServer(data);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
 
-    try {
-      client.sendToServer(data);
+      if (rollCount == 3)
+        sendData = false;
 
-    } catch (IOException e) {
-      e.printStackTrace();
     }
 
   }
@@ -120,7 +133,6 @@ public class GameControl implements ActionListener, ItemListener {
   @Override
   public void itemStateChanged(ItemEvent arg0) {
     selection = (String) arg0.getItem();
-
   }
 
 
