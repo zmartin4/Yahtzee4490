@@ -36,5 +36,12 @@ public class GameData implements Serializable {
     setDiceValues(diceValues);
     setRollable(rollable);
   }
+  
+  //Only used in the server to create a new GameData that is immediately replaced by existing gamedata
+  public GameData() {
+	  setPlayerScore(null);
+	  setDiceValues(null);
+	  setRollable(null);
+  }
 
 }

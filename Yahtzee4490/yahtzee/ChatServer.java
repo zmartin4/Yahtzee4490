@@ -77,6 +77,7 @@ public class ChatServer extends AbstractServer {
 	  }
   }
   
+  //Find the sum of an array (used for finding the total score of a player)
   public static int findSum(Integer[] array) {
 	    return Arrays.stream(array)
 	      .mapToInt(Integer::intValue)
@@ -105,6 +106,7 @@ public class ChatServer extends AbstractServer {
 	  }
   }
   
+  //Sends to all clients who are currently in the game (sendToAllClients would include people who haven't selected play game)
   public void sendToGameClients(Object obj) {
 	  for(int i = 0; i < clients.size(); i++) {
 		  try {
@@ -186,6 +188,7 @@ public class ChatServer extends AbstractServer {
     	  //Update specific highscores
     	  highscores[clients.indexOf(arg1)] += findSum(newGameData.getPlayerScore());
     	  
+    	  
     	  sendToGameClients(gameData);
     	  
     	  //Somewhere we may need to keep the high score for a specific user updated
@@ -206,6 +209,8 @@ public class ChatServer extends AbstractServer {
     		  //We would have some method here for setting the highscore in the database for a client/user on game end
     		  //ONLY if game ended normally
     		  //db.setHighScore(highscores[0], clients.get(0)); <-- sample
+    		  
+    		  //Then we would also want a method for sending the winning client that they have won
     		  
     		  //Then closes connections with all clients and clears them
     		  try {

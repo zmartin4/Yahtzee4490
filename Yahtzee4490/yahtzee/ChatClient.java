@@ -21,10 +21,10 @@ public class ChatClient extends AbstractClient {
       cac.createAccountSuccess();
 
     } else if (arg0.equals("LS")) {
-      System.out.println("ChatClient - Login");
+      System.out.println("Client - Login");
       lc.loginSuccess();
     } else if (arg0.equals("LF")) {
-      System.out.println("ChatClient - Login Failed");
+      System.out.println("Client - Login Failed");
       lc.displayError("Incorrect Username or Password");
     }
     
