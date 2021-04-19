@@ -2,6 +2,7 @@ package yahtzee;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.sql.SQLException;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import ocsf.server.AbstractServer;
@@ -132,7 +133,16 @@ public class ChatServer extends AbstractServer {
 
 
       // LoginControl loginControl = (LoginControl) arg0;
-      if (db.verifyLogin(loginData.getUsername(), loginData.getPassword())) {
+	    
+      // Check if login data is correct; Attempt to query data from
+      // user table, if the query returns an arraylist then the username and
+      // password are correct. If the query returns an empty arraylist
+      // then the username and/or password are incorrect.
+      String query = "SELECT username, user_password FROM The_User WHERE username='" + loginData.getUsername() + "' AND user_password='" + loginData.getPassword() + "';";
+      ArrayList<String> queryData = new ArrayList<String>();
+      queryData = db.query(query);
+	    
+      if (!queryData.isEmpty()) {
 
         try {
           arg1.sendToClient("LS");
@@ -157,8 +167,17 @@ public class ChatServer extends AbstractServer {
 
       System.out.println("Username/Password" + createAccountData.getUsername() + " "
           + createAccountData.getPassword());
-      if (!db.addLogin(createAccountData.getUsername(), createAccountData.getPassword())) {
-        System.out.println("Account Failed");
+	    
+      // Check if create account data is correct; Attempt to query data from
+      // user table, if the query returns an arraylist then the username and
+      // password are taken. If the query returns an empty arraylist
+      // then the username and password are available.
+      String query = "SELECT username, user_password FROM The_User WHERE username='" + createAccountData.getUsername() + "' AND user_password='" + createAccountData.getPassword() + "';";
+      ArrayList<String> queryData = new ArrayList<String>();
+      queryData = db.query(query);
+	    
+      if (!queryData.isEmpty()) {
+        System.out.println("Account Failed");      
         try {
           arg1.sendToClient("NAF");
         } catch (IOException e) {
@@ -167,6 +186,16 @@ public class ChatServer extends AbstractServer {
       } else {
 
         System.out.println("New Account");
+	   
+	// Create new account - set highscore to 0 upon creation
+	query = "INSERT INTO The_User VALUES('" + createAccountData.getUsername() + "', '" + createAccountData.getPassword() + "', 0);";
+	
+        try {
+	  db.executeDML(query);
+	} catch (SQLExecption e) {
+	  // TODO Auto-generated catch block
+	}
+	      
         try {
           arg1.sendToClient("NAS");
         } catch (IOException e) {
