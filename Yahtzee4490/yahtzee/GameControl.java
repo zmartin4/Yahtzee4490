@@ -127,10 +127,12 @@ public class GameControl implements ActionListener, ItemListener {
 
       GameData data = new GameData(finalScore, diceValues, rollable);
       try {
+        System.out.println("DATA SENT 100p");
         client.sendToServer(data);
       } catch (IOException e) {
         e.printStackTrace();
       }
+      sendData = false;
 
 
 
@@ -140,6 +142,7 @@ public class GameControl implements ActionListener, ItemListener {
     if (rollCount > 0 && sendData) {
       GameData data = new GameData(finalScore, diceValues, rollable);
       try {
+        System.out.println("DATA SENT");
         client.sendToServer(data);
       } catch (IOException e) {
         e.printStackTrace();
@@ -178,6 +181,7 @@ public class GameControl implements ActionListener, ItemListener {
     GamePanel gamePanel = (GamePanel) container.getComponent(4);
     gamePanel.setTurnIndicator();
     allowInput = true;
+    sendData = true;
     rollCount = 0;
   }
 

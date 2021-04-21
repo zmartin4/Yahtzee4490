@@ -24,7 +24,7 @@ public class ChatClient extends AbstractClient {
   @Override
   public void handleMessageFromServer(Object arg0) {
 
-    System.out.println(arg0.getClass());
+
     if (arg0.equals("NAS")) {
       // System.out.println("ChatClient - New Account");
       cac.createAccountSuccess();
@@ -57,7 +57,9 @@ public class ChatClient extends AbstractClient {
 
     } else if (arg0.equals("Go")) {
       gc.goTurn();
+      System.out.println("GO");
     } else if (arg0.equals("Wait")) {
+      System.out.println("WAIT");
       gc.waitTurn();
 
     } else if (arg0 instanceof GameData) {

@@ -448,6 +448,7 @@ public class GamePanel extends JPanel {
   }
 
 
+  // Called Internally from GameControl
   // Updates the users scoreboard values as dice are being thrown
   public void updateUserScoreboard(Integer[] userScore, Integer[] finalScore) {
 
@@ -469,7 +470,7 @@ public class GamePanel extends JPanel {
     }
   }
 
-
+  // Called from GameControl from the ChatServer
   // Updates the state of the dice and the opps scoreboard once a category is submitted
   public void updateOppGame(Object arg0, String whosData) {
     GameData currentGameData = (GameData) arg0;

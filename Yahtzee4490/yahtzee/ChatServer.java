@@ -169,15 +169,28 @@ public class ChatServer extends AbstractServer {
 
     if (arg0 instanceof GameData) {
       GameData gameData = (GameData) arg0;
+
+
       sendToGameClients(arg1.getName()); // send clients what user it came from
       sendToGameClients(gameData); // send clients the GameData
 
+      Integer[] dv = gameData.getDiceValues();
+      Boolean[] r = gameData.getRollable();
+      Boolean turnOver = true;
+      for (int i : dv) {
+        if (i != 1)
+          turnOver = false;
+      }
+      for (Boolean d : r) {
+        if (d == false)
+          turnOver = false;
+      }
 
-      // Somewhere we may need to keep the high score for a specific user updated
 
-      nextTurn();
-      tellToGo();
-
+      if (turnOver) {
+        nextTurn();
+        tellToGo();
+      }
 
 
     }
@@ -247,15 +260,17 @@ public class ChatServer extends AbstractServer {
 
   // Increments whose turn it is. Wraps around if the fifth client is currently going
   public void nextTurn() {
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < clients.size(); i++) {
+
       if (turns[i] == 1) {
         turns[i] = 0;
 
-        if (i == 4) {
+        if (i == 1) {
           turns[0] = 1;
         } else {
           turns[i + 1] = 1;
         }
+        break;
       }
     }
   }
@@ -263,6 +278,7 @@ public class ChatServer extends AbstractServer {
   // Sends to all clients who are currently in the game (sendToAllClients would include people who
   // haven't selected play game)
   public void sendToGameClients(Object obj) {
+
     for (int i = 0; i < clients.size(); i++) {
       try {
         clients.get(i).sendToClient(obj);
