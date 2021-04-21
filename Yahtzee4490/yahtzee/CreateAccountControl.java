@@ -3,6 +3,7 @@ package yahtzee;
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.EOFException;
 import java.io.IOException;
 import javax.swing.JPanel;
 
@@ -44,19 +45,22 @@ public class CreateAccountControl implements ActionListener {
       } else if (!data.getPassword().equals(data.getVerifyPassword())) {
         displayError("Both Passwords must be the same.");
         return;
-      } else if (data.getPassword().length() < 5) {
+      } else if (data.getPassword().length() < 0) {
         displayError("Password must be at least 6 characters ");
         return;
       }
       // Submit the login information to the server.
       try {
         client.sendToServer(data);
+      } catch (EOFException e) {
+        e.printStackTrace();
 
       } catch (IOException e) {
         e.printStackTrace();
       }
 
     }
+
   }
 
   // After the login is successful, set the User object and display the contacts screen. - this

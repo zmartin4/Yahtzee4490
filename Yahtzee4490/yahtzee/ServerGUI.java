@@ -32,7 +32,7 @@ public class ServerGUI extends JFrame {
 
 
   private ChatServer server;
-
+  // private YahtzeeServer server;
 
   public ServerGUI() {
     int i = 0;
@@ -40,6 +40,7 @@ public class ServerGUI extends JFrame {
     final int midBound1 = 275;
 
     server = new ChatServer();
+    // server = new YahtzeeServer();
     setTitle("server");
     setSize(600, 500);
     setResizable(false);

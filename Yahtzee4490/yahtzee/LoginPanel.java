@@ -49,7 +49,7 @@ public class LoginPanel extends JPanel {
         new JLabel("Enter your username and password to log in.", JLabel.CENTER);
     labelPanel.add(errorLabel);
     instructionLabel.setFont(font);
-    instructionLabel.setForeground(Color.WHITE);;
+    instructionLabel.setForeground(Color.WHITE);
     labelPanel.add(instructionLabel);
 
     // Create a panel for the login information form.
@@ -57,11 +57,13 @@ public class LoginPanel extends JPanel {
     usernameLabel.setForeground(Color.WHITE);
     usernameLabel.setFont(font);
     usernameField = new JTextField(10);
+    usernameField.setText("");
 
     JLabel passwordLabel = new JLabel("Password:", JLabel.RIGHT);
     passwordLabel.setForeground(Color.WHITE);
     passwordLabel.setFont(font);
     passwordField = new JPasswordField(10);
+    passwordField.setText("");
 
 
     loginPanel.add(usernameLabel);

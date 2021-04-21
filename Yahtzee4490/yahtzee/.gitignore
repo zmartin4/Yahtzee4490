@@ -23,3 +23,8 @@
 /GameData.class
 /GameControl$Dice.class
 /GamePanel$Buttons.class
+/LeaderboardPanel.class
+/LeaderboardControl.class
+/YahtzeeServer.class
+/Database.class
+/User.class

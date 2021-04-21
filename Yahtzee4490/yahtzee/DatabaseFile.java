@@ -8,7 +8,12 @@ public class DatabaseFile {
 
   private ArrayList<String[]> loginInfo = new ArrayList<String[]>();
 
-
+  protected void printLogin() {
+    System.out.println();
+    for (String login[] : loginInfo) {
+      System.out.println(login[0] + " " + login[1] + " " + login[2]);
+    }
+  }
 
   protected boolean verifyLogin(String username, String password) {
     for (String login[] : loginInfo) {
@@ -44,6 +49,14 @@ public class DatabaseFile {
     }
     return rand_int;
 
+  }
+
+  public String getID(String username) {
+    for (String login[] : loginInfo) {
+      if (username.equals(login[0]))
+        return login[2];
+    }
+    return null;
   }
 
   protected boolean duplicateLogin(String username) {

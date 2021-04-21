@@ -20,6 +20,8 @@ import javax.swing.JPanel;
 
 public class GamePanel extends JPanel {
 
+
+  final int numOpps = 1;
   // Dices for the rollable and non-rollable location
   private JButton dice1Keep = new JButton("1Keep");
   private JButton dice1Roll = new JButton("1Roll");
@@ -31,8 +33,9 @@ public class GamePanel extends JPanel {
   private JButton dice4Roll = new JButton("4Roll");
   private JButton dice5Keep = new JButton("5Keep");
   private JButton dice5Roll = new JButton("5Roll");
+  ImageIcon bgTable;
 
-
+  ArrayList<Integer> player = new ArrayList<Integer>();
 
   // Faces for the dice
   private ImageIcon face1 =
@@ -51,7 +54,8 @@ public class GamePanel extends JPanel {
       new ImageIcon(this.getClass().getResource("/yahtzee/images/board_color.png"));
 
   // Creates button for each category for the user of the scoreboard
-  private JButton[] userCatButtons = new JButton[16];
+  private JButton[] userScoreButtons = new JButton[17];
+  private JButton nameUser = new JButton("");
   private JButton oneUser = new JButton("");
   private JButton twoUser = new JButton("");
   private JButton threeUser = new JButton("");
@@ -69,8 +73,29 @@ public class GamePanel extends JPanel {
   private JButton bonus2User = new JButton("");
   private JButton totalUser = new JButton("");
 
+  ArrayList<JButton[]> oppScore = new ArrayList<JButton[]>();
+  private JButton[] oppScoreButtons;
+  private JButton nameOpp;
+  private JButton oneOpp;
+  private JButton twoOpp;
+  private JButton threeOpp;
+  private JButton fourOpp;
+  private JButton fiveOpp;
+  private JButton sixOpp;
+  private JButton bonus1Opp;
+  private JButton kind3Opp;
+  private JButton kind4Opp;
+  private JButton fhOpp;
+  private JButton smallSOpp;
+  private JButton largeSOpp;
+  private JButton yahtzeeOpp;
+  private JButton chanceOpp;
+  private JButton bonus2Opp;
+  private JButton totalOpp;
+
   // Creates button for each category label for the scoreboard
-  private JButton[] catButtons = new JButton[16];
+  private JButton[] catButtons = new JButton[17];
+  JButton name = new JButton("Name");
   JButton ones = new JButton("Ones");
   JButton twos = new JButton("Twos");
   JButton threes = new JButton("Threes");
@@ -95,9 +120,11 @@ public class GamePanel extends JPanel {
   JButton chooseCategory;
   JButton quitButton;
   JComboBox pickCategory;
+  int orderNum;
+
+
 
   ArrayList<String> categorySelection = new ArrayList<String>();
-
   final String[] categorySelectionsFINAL = {"One", "Two", "Three", "Four", "Five", "Six",
       "Three of a Kind", "Four of a Kind", "Full House", "Small Straight", "Large Straight",
       "Yahtzee", "Chance", "Select Categeory"}; // Starting category label names
@@ -106,16 +133,22 @@ public class GamePanel extends JPanel {
 
   GridBagConstraints catC = new GridBagConstraints();
   JPanel catP = new JPanel(new GridBagLayout());
+  JPanel scoresPanel = new JPanel(new GridBagLayout());
+  GridBagConstraints scoreC = new GridBagConstraints();
 
 
 
   // Style Constants
   Font catFont = new Font("Arial", Font.BOLD, 20);
+  Font nameFont = new Font("Arial", Font.PLAIN, 14);
   Font buttonFont = new Font("Arial", Font.BOLD, 32);
-  Color color = new Color(215, 45, 53);
+  Color yRed = new Color(215, 45, 53);
+  Color yourTurn = new Color(160, 230, 255);
   Dimension diceSize = new Dimension(70, 70);
 
-
+  //////////////////////////////////
+  ///// Changes Dice Status /////
+  //////////////////////////////////
 
   public void setDice1(boolean rollable, int value) {
     boolean isClickable = true;
@@ -234,81 +267,253 @@ public class GamePanel extends JPanel {
 
   }
 
-  // Initalization to Arrays for easier manipulation
-  public void setScoreboardButtons() {
+  //////////////////////////////////////////
+  ///// INITIAL SCOREBOARD SETUPS /////
+  /////////////////////////////////////////
+  public void setCategoryButtons() {
 
     // Sets ButtonArray for category LABELS for the scoreboard
-    catButtons[0] = ones;
-    catButtons[1] = twos;
-    catButtons[2] = threes;
-    catButtons[3] = fours;
-    catButtons[4] = fives;
-    catButtons[5] = sixes;
-    catButtons[6] = bonus1;
-    catButtons[7] = kind3;
-    catButtons[8] = kind4;
-    catButtons[9] = fh;
-    catButtons[10] = smallS;
-    catButtons[11] = largeS;
-    catButtons[12] = yahtzee;
-    catButtons[13] = chance;
-    catButtons[14] = bonus2;
-    catButtons[15] = total;
+    catButtons[0] = name;
+    catButtons[1] = ones;
+    catButtons[2] = twos;
+    catButtons[3] = threes;
+    catButtons[4] = fours;
+    catButtons[5] = fives;
+    catButtons[6] = sixes;
+    catButtons[7] = bonus1;
+    catButtons[8] = kind3;
+    catButtons[9] = kind4;
+    catButtons[10] = fh;
+    catButtons[11] = smallS;
+    catButtons[12] = largeS;
+    catButtons[13] = yahtzee;
+    catButtons[14] = chance;
+    catButtons[15] = bonus2;
+    catButtons[16] = total;
 
     // Sets the style elements for each label
     for (int i = 0; i < catButtons.length; i++) {
       catButtons[i].setBorderPainted(false);
       catButtons[i].setFocusPainted(false);
-      catButtons[i].setBackground(color);
+      catButtons[i].setBackground(yRed);
       catButtons[i].setForeground(Color.WHITE);
       catButtons[i].setFont(catFont);
     }
 
 
-    // Sets ButtonArray for each category SCORE for the USER
-    userCatButtons[0] = oneUser;
-    userCatButtons[1] = twoUser;
-    userCatButtons[2] = threeUser;
-    userCatButtons[3] = fourUser;
-    userCatButtons[4] = fiveUser;
-    userCatButtons[5] = sixUser;
-    userCatButtons[6] = bonus1User;
-    userCatButtons[7] = kind3User;
-    userCatButtons[8] = kind4User;
-    userCatButtons[9] = fhUser;
-    userCatButtons[10] = smallSUser;
-    userCatButtons[11] = largeSUser;
-    userCatButtons[12] = yahtzeeUser;
-    userCatButtons[13] = chanceUser;
-    userCatButtons[14] = bonus2User;
-    userCatButtons[15] = totalUser;
+    catP.setBackground(Color.LIGHT_GRAY);
+    int spacing = 0;
+    for (int i = 0; i < userScoreButtons.length; i++) {
+      catButtons[i].setBorderPainted(false);
+      catButtons[i].setFocusPainted(false);
+      catButtons[i].setForeground(Color.WHITE);
+      catButtons[i].setFont(catFont);
+      catButtons[i].setPreferredSize(new Dimension(185, 35));
 
-    for (int i = 0; i < userCatButtons.length; i++)
-      userCatButtons[i].setFont(catFont);
+      catC.gridx = 0;
+      catC.gridy = spacing;
+      catC.insets = new Insets(3, 0, 3, 0);
+      if (i == userScoreButtons.length - 1 || i == 0)
+        catC.insets = new Insets(10, 0, 10, 0);
+      catP.add(catButtons[i], catC);
+      spacing = spacing + 5;
+    }
 
     for (String categories : categorySelectionsFINAL)
       categorySelection.add(categories);
   }
 
-  // Is called from GameControl and updates the GUI Scoreboard
-  public void updateUserScoreboard(Integer[] userScore, Integer[] finalScore, int selection) {
+  public void setUserScoreboard() {
+    // Sets ButtonArray for each category SCORE for the USER
+    userScoreButtons[0] = nameUser;
+
+    userScoreButtons[1] = oneUser;
+    userScoreButtons[2] = twoUser;
+    userScoreButtons[3] = threeUser;
+    userScoreButtons[4] = fourUser;
+    userScoreButtons[5] = fiveUser;
+    userScoreButtons[6] = sixUser;
+    userScoreButtons[7] = bonus1User;
+    userScoreButtons[8] = kind3User;
+    userScoreButtons[9] = kind4User;
+    userScoreButtons[10] = fhUser;
+    userScoreButtons[11] = smallSUser;
+    userScoreButtons[12] = largeSUser;
+    userScoreButtons[13] = yahtzeeUser;
+    userScoreButtons[14] = chanceUser;
+    userScoreButtons[15] = bonus2User;
+    userScoreButtons[16] = totalUser;
+
+    scoresPanel.setBackground(Color.LIGHT_GRAY);
+
+    int spacing = 0;
+    for (int i = 0; i < userScoreButtons.length; i++) {
+      userScoreButtons[i].setFont(catFont);
+      userScoreButtons[i].setPreferredSize(new Dimension(75, 35));
+      userScoreButtons[i].setBackground(Color.white);
+
+      if (i == 0) {
+        userScoreButtons[i].setBackground(Color.magenta);
+      }
+      scoreC.gridx = 0;
+      scoreC.gridy = spacing;
+      scoreC.insets = new Insets(3, 7, 3, 23);
+      if (i == userScoreButtons.length - 1 || i == 0)
+        scoreC.insets = new Insets(10, 7, 10, 23);
+      scoresPanel.add(userScoreButtons[i], scoreC);
+      spacing = spacing + 5;
+    }
+  }
+
+  public void setOppScoreboard() {
+
+    for (int i = 0; i < numOpps; i++) {
+      oppScoreButtons = new JButton[17];
+      nameOpp = new JButton();
+      oneOpp = new JButton();
+      twoOpp = new JButton();
+      threeOpp = new JButton();
+      fourOpp = new JButton();
+      fiveOpp = new JButton();
+      sixOpp = new JButton();
+      bonus1Opp = new JButton();
+      kind3Opp = new JButton();
+      kind4Opp = new JButton();
+      fhOpp = new JButton();
+      smallSOpp = new JButton();
+      largeSOpp = new JButton();
+      yahtzeeOpp = new JButton();
+      chanceOpp = new JButton();
+      bonus2Opp = new JButton();
+      totalOpp = new JButton();
+
+      oppScoreButtons[0] = nameOpp;
+      oppScoreButtons[1] = oneOpp;
+      oppScoreButtons[2] = twoOpp;
+      oppScoreButtons[3] = threeOpp;
+      oppScoreButtons[4] = fourOpp;
+      oppScoreButtons[5] = fiveOpp;
+      oppScoreButtons[6] = sixOpp;
+      oppScoreButtons[7] = bonus1Opp;
+      oppScoreButtons[8] = kind3Opp;
+      oppScoreButtons[9] = kind4Opp;
+      oppScoreButtons[10] = fhOpp;
+      oppScoreButtons[11] = smallSOpp;
+      oppScoreButtons[12] = largeSOpp;
+      oppScoreButtons[13] = yahtzeeOpp;
+      oppScoreButtons[14] = chanceOpp;
+      oppScoreButtons[15] = bonus2Opp;
+      oppScoreButtons[16] = totalOpp;
+
+      oppScore.add(oppScoreButtons);
+      scoresPanel.setBackground(Color.LIGHT_GRAY);
+
+      int spacing = 0;
+      for (int j = 0; j < oppScoreButtons.length; j++) {
+        oppScoreButtons[j].setFont(catFont);
+        oppScoreButtons[j].setPreferredSize(new Dimension(75, 35));
+        oppScoreButtons[j].setBackground(Color.white);
+        scoreC.gridx = i + 1;
+        scoreC.gridy = spacing;
+        scoreC.insets = new Insets(3, 7, 3, 7);
+        if (j == 0) {
+          oppScoreButtons[j].setBackground(Color.magenta);
+        }
+
+        if (j == userScoreButtons.length - 1 || j == 0)
+          scoreC.insets = new Insets(10, 7, 10, 7);
+        scoresPanel.add(oppScoreButtons[j], scoreC);
+        spacing = spacing + 5;
+      }
+    }
+
+  }
+
+
+  ////////////////////////////////////////////////////
+  ///// Sets Names on the Top of Scoreboard /////
+  //////////////////////////////////////////////////
+
+  public void setUserName(String username) {
+    nameUser.setText(username);
+    nameUser.setFont(nameFont);
+  }
+
+  public void setOppName(Object oppName) {
+    ArrayList<String> oppNames = (ArrayList<String>) oppName;
+
+    for (int i = 0; i < oppScore.size(); i++) {
+      oppScore.get(i)[0].setText(oppNames.get(i));
+    }
+  }
+
+
+  // Updates the users scoreboard values as dice are being thrown
+  public void updateUserScoreboard(Integer[] userScore, Integer[] finalScore) {
 
     // Add all scores to userScoreboard
-    for (int i = 0; i < userScore.length; i++)
-      userCatButtons[i].setText(String.valueOf(userScore[i]));
+    for (int i = 1; i < userScore.length; i++) {
+
+      if (i == 7 && finalScore[i] == -1 || i == 15 && finalScore[i] == -1)
+        continue;
+      userScoreButtons[i].setText(String.valueOf(userScore[i]));
+    }
+
 
     // Overrides and adds previously selected categories
-    for (int i = 0; i < finalScore.length; i++) {
+    for (int i = 1; i < finalScore.length; i++) {
       if (finalScore[i] != -1) {
-        userCatButtons[i].setText(String.valueOf(finalScore[i]));
-        userCatButtons[selection].setForeground(Color.red);
+        userScoreButtons[i].setText(String.valueOf(finalScore[i]));
+        userScoreButtons[i].setForeground(Color.red);
       }
     }
   }
 
-  public void updateOpponentInfo() {
 
+  // Updates the state of the dice and the opps scoreboard once a category is submitted
+  public void updateOppGame(Object arg0, String whosData) {
+    GameData currentGameData = (GameData) arg0;
+    Integer[] diceValue = currentGameData.getDiceValues();
+    Boolean[] rollable = currentGameData.getRollable();
+    Integer[] score = currentGameData.getPlayerScore();
+
+    for (int i = 0; i < oppScore.size(); i++) {
+      if (oppScore.get(i)[0].getText().equals(whosData)) {
+        for (int j = 1; j < oppScore.get(i).length; j++) {
+          if (score[j] != -1)
+            oppScore.get(i)[j].setText(String.valueOf(score[j]));
+        }
+      }
+    }
+
+
+    setDice1(rollable[0], diceValue[0]);
+    setDice2(rollable[1], diceValue[1]);
+    setDice3(rollable[2], diceValue[2]);
+    setDice4(rollable[3], diceValue[3]);
+    setDice5(rollable[4], diceValue[4]);
   }
+
+  // Sets the color for the user scoreboard if it's their turn
+  public void setTurnIndicator() {
+    for (int i = 1; i < userScoreButtons.length; i++)
+      userScoreButtons[i].setBackground(yourTurn);
+  }
+
+  // Sets the color of the User scoreboard back to white and finalScore colors
+  public void resetUserScoreboard(Integer[] finalScore) {
+    for (int i = 1; i < finalScore.length; i++) {
+      userScoreButtons[i].setBackground(Color.white);
+      if (finalScore[i] != -1) {
+        userScoreButtons[i].setText(String.valueOf(finalScore[i]));
+        userScoreButtons[i].setForeground(Color.black);
+      } else {
+        userScoreButtons[i].setText("");
+      }
+    }
+  }
+
+
 
   // Removes the chosen category from the JComboBox
   public void removeCategorySelection(String selection) {
@@ -329,69 +534,40 @@ public class GamePanel extends JPanel {
 
   }
 
+
+
   public GamePanel(GameControl gc) {
-    setScoreboardButtons();
+    setCategoryButtons();
+    setUserScoreboard();
+    setOppScoreboard();
 
     // Overall Panel
-    JPanel layoutPanel = new JPanel(new BorderLayout(50, 25));
+    JPanel layoutPanel = new JPanel(new BorderLayout(60, 25));
+    layoutPanel.setBackground(Color.orange);
 
     // Scoreboard Panels
-    JPanel scoreboardPanel = new JPanel(new GridLayout(1, 3, 10, 0));
+    JPanel scoreboardPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
     JPanel categoriesPanel = new JPanel(new GridLayout(17, 0, 10, 5));
     JPanel userScorePanel = new JPanel(new GridLayout(17, 1, 0, 5));
     JPanel oppScorePanel = new JPanel(new GridLayout(17, 1, 0, 0));
+
 
     JPanel quitPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
     // Dice Interaction Panel
     JPanel playPanel = new JPanel(new BorderLayout());
+
     JPanel diceControlPanel = new JPanel();
     GridBagConstraints c = new GridBagConstraints();
     JPanel dicePanel = new JPanel(new GridBagLayout());
 
-    scoreboardPanel.setBackground(color.LIGHT_GRAY);
-    categoriesPanel.setBackground(color.LIGHT_GRAY);
-    userScorePanel.setBackground(color.LIGHT_GRAY);
-    oppScorePanel.setBackground(color.LIGHT_GRAY);
-
-
+    scoreboardPanel.setBackground(Color.LIGHT_GRAY);
+    categoriesPanel.setBackground(Color.LIGHT_GRAY);
+    // userScorePanel.setBackground(color.LIGHT_GRAY);
+    // oppScorePanel.setBackground(color.LIGHT_GRAY);
+    scoreboardPanel.add(catP);
+    scoreboardPanel.add(scoresPanel);
     // Category Labels for Scoreboard
-    categoriesPanel.add(ones);
-    categoriesPanel.add(twos);
-    categoriesPanel.add(threes);
-    categoriesPanel.add(fours);
-    categoriesPanel.add(fives);
-    categoriesPanel.add(sixes);
-    categoriesPanel.add(bonus1);
-    categoriesPanel.add(kind3);
-    categoriesPanel.add(kind4);
-    categoriesPanel.add(fh);
-    categoriesPanel.add(smallS);
-    categoriesPanel.add(largeS);
-    categoriesPanel.add(yahtzee);
-    categoriesPanel.add(chance);
-    categoriesPanel.add(bonus2);
-    categoriesPanel.add(total);
-
-
-
-    // User Scores for Scoreboard
-    userScorePanel.add(oneUser);
-    userScorePanel.add(twoUser);
-    userScorePanel.add(threeUser);
-    userScorePanel.add(fourUser);
-    userScorePanel.add(fiveUser);
-    userScorePanel.add(sixUser);
-    userScorePanel.add(bonus1User);
-    userScorePanel.add(kind3User);
-    userScorePanel.add(kind4User);
-    userScorePanel.add(fhUser);
-    userScorePanel.add(smallSUser);
-    userScorePanel.add(largeSUser);
-    userScorePanel.add(yahtzeeUser);
-    userScorePanel.add(chanceUser);
-    userScorePanel.add(bonus2User);
-    userScorePanel.add(totalUser);
 
 
 
@@ -475,30 +651,31 @@ public class GamePanel extends JPanel {
     ////////////////////////////////////////
     /* Sets Location for the Dice Buttons */
     ////////////////////////////////////////
-    c.gridx = 0;
-    c.gridy = 0;
+
+    c.gridx = 2;
+    c.gridy = 2;
     c.insets = new Insets(0, 20, 0, 20);
     dicePanel.add(dice1Roll, c);
-    c.gridx = 1;
-    dicePanel.add(dice2Roll, c);
-    c.gridx = 2;
-    dicePanel.add(dice3Roll, c);
     c.gridx = 3;
-    dicePanel.add(dice4Roll, c);
+    dicePanel.add(dice2Roll, c);
     c.gridx = 4;
+    dicePanel.add(dice3Roll, c);
+    c.gridx = 5;
+    dicePanel.add(dice4Roll, c);
+    c.gridx = 6;
     dicePanel.add(dice5Roll, c);
 
-    c.gridx = 0;
-    c.gridy = 1;
+    c.gridx = 2;
+    c.gridy = 3;
     c.insets = new Insets(100, 20, 0, 20);
     dicePanel.add(dice1Keep, c);
-    c.gridx = 1;
-    dicePanel.add(dice2Keep, c);
-    c.gridx = 2;
-    dicePanel.add(dice3Keep, c);
     c.gridx = 3;
-    dicePanel.add(dice4Keep, c);
+    dicePanel.add(dice2Keep, c);
     c.gridx = 4;
+    dicePanel.add(dice3Keep, c);
+    c.gridx = 5;
+    dicePanel.add(dice4Keep, c);
+    c.gridx = 6;
     dicePanel.add(dice5Keep, c);
 
 
@@ -525,8 +702,8 @@ public class GamePanel extends JPanel {
 
     // adding sections to the scoreboard
     scoreboardPanel.add(categoriesPanel);
-    scoreboardPanel.add(userScorePanel);
-    scoreboardPanel.add(oppScorePanel);
+    // scoreboardPanel.add(userScorePanel);
+    // scoreboardPanel.add(oppScorePanel);
     quitPanel.add(quitButton);
 
     // add dice selection
@@ -541,10 +718,15 @@ public class GamePanel extends JPanel {
 
     // add all panels
     layoutPanel.add(quitPanel, BorderLayout.PAGE_START);
-    layoutPanel.add(scoreboardPanel, BorderLayout.CENTER);
+    layoutPanel.add(scoreboardPanel, BorderLayout.LINE_START);
+    // layoutPanel.add(catP, BorderLayout.LINE_START);
+    // layoutPanel.add(scoresPanel, BorderLayout.CENTER);
     layoutPanel.add(playPanel, BorderLayout.LINE_END);
 
     this.add(layoutPanel);
   }
+
+
+
 }
 

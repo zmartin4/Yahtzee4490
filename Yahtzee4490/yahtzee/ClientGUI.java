@@ -38,8 +38,9 @@ public class ClientGUI extends JFrame {
     InitialControl ic = new InitialControl(container);
     LoginControl lc = new LoginControl(container, client); // Probably will want to pass in
     CreateAccountControl cac = new CreateAccountControl(container, client); // ChatClient here
-    MainMenuControl mmc = new MainMenuControl(container);
+    MainMenuControl mmc = new MainMenuControl(container, client);
     GameControl gc = new GameControl(container, client);
+    LeaderboardControl lbc = new LeaderboardControl(container);
 
     // ContactPanel cp = new ContactPanel(container, client);
     Color color = new Color(215, 45, 53);
@@ -52,6 +53,7 @@ public class ClientGUI extends JFrame {
     JPanel view3 = new CreateAccountPanel(cac);
     JPanel view4 = new MainMenuPanel(mmc);
     JPanel view5 = new GamePanel(gc);
+    JPanel view6 = new LeaderboardPanel(lbc);
 
 
     // Add the views to the card layout container.
@@ -60,9 +62,11 @@ public class ClientGUI extends JFrame {
     container.add(view3, "3");
     container.add(view4, "4");
     container.add(view5, "5");
+    container.add(view6, "6");
 
     client.setLoginControl(lc);
     client.setCreateAccountControl(cac);
+    client.setGameControl(gc);
 
 
 
@@ -76,7 +80,7 @@ public class ClientGUI extends JFrame {
 
 
     // Show the JFrame.
-    this.setSize(1200, 800);
+    this.setSize(1200, 850);
     this.setVisible(true);
   }
 

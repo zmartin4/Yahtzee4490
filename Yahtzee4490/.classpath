@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre1.8.0_271"/>
 	<classpathentry kind="src" path=""/>
-	<classpathentry kind="lib" path="ocsf.jar"/>
+	<classpathentry kind="lib" path="ocsf.jar" sourcepath="ocsf.jar"/>
+	<classpathentry kind="lib" path="mysql-connector-java-5.1.40-bin.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
