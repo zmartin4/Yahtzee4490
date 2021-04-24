@@ -36,7 +36,8 @@ public class Database {
     // Create the connection object
     try {
       conn = DriverManager.getConnection(url, user, pass);
-      this.executeDML("insert into user values('username', aes_encrypt('password', 'secretkey'))");
+      // this.executeDML(
+      // "insert into theuser values('username', aes_encrypt('password', 'secretkey'), '0')");
     } catch (SQLException e) {
       e.printStackTrace();
     }
@@ -59,6 +60,7 @@ public class Database {
     try {
       stmt = conn.createStatement();
       rs = stmt.executeQuery(query);
+
       if (!rs.next()) {
         return null;
       } else {
@@ -73,9 +75,11 @@ public class Database {
           for (i = 1; i <= numColumns; i++) {
             // The record is the current thing in rs
             record = rs.getString(i);
+
           }
           // Add to the array
           array.add(record);
+
 
         } while (rs.next());
       }

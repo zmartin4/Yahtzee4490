@@ -1,10 +1,11 @@
 package yahtzee;
 
 import java.awt.Color;
-import java.io.EOFException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import ocsf.server.AbstractServer;
@@ -14,29 +15,24 @@ public class ChatServer extends AbstractServer {
   private JTextArea log;
   private JLabel status;
 
-  private DatabaseFile database = new DatabaseFile();
   private Database db = new Database();
 
-  private Integer[] playerScore = new Integer[16];
-  private Integer[] diceValues = new Integer[5];
-  private Boolean[] rollable = new Boolean[5];
-  private Integer[] playerScores = new Integer[3];
-  private ArrayList<Integer[]> gameHistory;
-  int counter = 0;
-  int playersChosen = 2;
-  int oppTurn = 0;
-  int counter_reset = 0;
+
+
+  int playersChosen = 0;
   int roundCounter = 0;
   private GameData gameData;
   private ArrayList<ConnectionToClient> clients;
-  private ArrayList<String> clientName;
-  int[] turns = {0, 0};
+  private ArrayList<String> clientNames;
+  Integer[] turns;
+  Integer[] currScores;
+
 
 
   public ChatServer() {
     super(12345);
     clients = new ArrayList<ConnectionToClient>();
-    clientName = new ArrayList<String>();
+    clientNames = new ArrayList<String>();
   }
 
   public ChatServer(int port) {
@@ -71,10 +67,8 @@ public class ChatServer extends AbstractServer {
   @Override
   protected void handleMessageFromClient(Object arg0, ConnectionToClient arg1) {
 
-    System.out.println("Message from Client" + arg0.toString() + " ||||  " + arg1.getId());
+    System.out.println(arg0.toString() + " ||||  " + arg1.getId());
 
-    if (getNumberOfClients() == 0)
-      counter = 0;
 
     if (arg0 instanceof LoginData) {
       LoginData loginData = (LoginData) arg0;
@@ -83,42 +77,33 @@ public class ChatServer extends AbstractServer {
       // user table, if the query returns an arraylist then the username and
       // password are correct. If the query returns an empty arraylist
       // then the username and/or password are incorrect.
-      String query = "SELECT userName, userPassword FROM TheUser WHERE userName='"
-          + loginData.getUsername() + "' AND userPassword='" + loginData.getPassword() + "';";
+      String query =
+          "SELECT userName, userPassword FROM TheUser WHERE userName='" + loginData.getUsername()
+              + "' AND userPassword=AES_ENCRYPT('" + loginData.getPassword() + "','secretkey');";
       ArrayList<String> queryData = new ArrayList<String>();
       queryData = db.query(query);
+
 
       if (queryData != null) {
         try {
           arg1.sendToClient("LS");
           try {
-
             arg1.sendToClient("uName," + loginData.getUsername()); // Sets username in ChatClient
             arg1.setName(loginData.getUsername()); // Sets the ThreadName to the Username entered
-
 
           } catch (IOException e) {
             e.printStackTrace();
           }
-
-
         } catch (IOException e) {
           e.printStackTrace();
         }
-
-
-
       } else {
         try {
           arg1.sendToClient("LF");
         } catch (IOException e) {
           e.printStackTrace();
         }
-        System.out.println("Login Failed");
       }
-
-
-
     }
 
     if (arg0 instanceof CreateAccountData) {
@@ -126,17 +111,15 @@ public class ChatServer extends AbstractServer {
       CreateAccountData createAccountData = (CreateAccountData) arg0;
 
       // Check if create account data is correct; Attempt to query data from
-      // user table, if the query returns an arraylist then the username and
-      // password are taken. If the query returns an empty arraylist
+      // user table, if the query returns an arraylist then the username.
+      // If the query returns an empty arraylist
       // then the username and password are available.
       String query = "SELECT userName, userPassword FROM TheUser WHERE userName='"
-          + createAccountData.getUsername() + "' AND userPassword='"
-          + createAccountData.getPassword() + "';";
+          + createAccountData.getUsername() + "';";
       ArrayList<String> queryData = new ArrayList<String>();
       queryData = db.query(query);
 
       if (queryData != null) {
-        System.out.println("Account Failed");
         try {
           arg1.sendToClient("NAF");
         } catch (IOException e) {
@@ -147,13 +130,12 @@ public class ChatServer extends AbstractServer {
         System.out.println("New Account");
 
         // Create new account - set highscore to 0 upon creation
-        query = "INSERT INTO TheUser VALUES('" + createAccountData.getUsername() + "', '"
-            + createAccountData.getPassword() + "', 0);";
+        query = "INSERT INTO TheUser VALUES('" + createAccountData.getUsername()
+            + "', aes_encrypt('" + createAccountData.getPassword() + "','secretkey'), 0);";
 
         try {
           db.executeDML(query);
         } catch (SQLException e) {
-          // TODO Auto-generated catch block
         }
         try {
           arg1.sendToClient("NAS");
@@ -170,13 +152,13 @@ public class ChatServer extends AbstractServer {
     if (arg0 instanceof GameData) {
       GameData gameData = (GameData) arg0;
 
-
-      sendToGameClients(arg1.getName()); // send clients what user it came from
+      sendToGameClients(arg1.getName()); // send clients what client sent the data
       sendToGameClients(gameData); // send clients the GameData
 
       Integer[] dv = gameData.getDiceValues();
       Boolean[] r = gameData.getRollable();
       Boolean turnOver = true;
+
       for (int i : dv) {
         if (i != 1)
           turnOver = false;
@@ -186,58 +168,192 @@ public class ChatServer extends AbstractServer {
           turnOver = false;
       }
 
-
       if (turnOver) {
+        for (int i = 0; i < playersChosen; i++) {
+          if (turns[i] == 1) {
+            currScores[i] = gameData.getPlayerScore()[16];
+          }
+        }
         nextTurn();
-        tellToGo();
-      }
+        if (roundCounter == 13) {
 
+          gameover();
+        }
+        tellToGo();
+
+
+
+      }
 
     }
+    if (arg0 instanceof String) { // Redirects Client on the MainMenu depending on the game state
+      String command = (String) arg0;
+
+      if (command.equals("New Game")) {
+        String message = "";
+
+        if (playersChosen == 0) {
+          message = "New Lobby"; // New Lobby - playersChosen not set
+
+        } else
+          message = "New Lobby Redirect"; // Redirect to join the created lobby - playersChosen is
+                                          // set
+
+        try {
+          arg1.sendToClient(message);
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+
+      } else if (command.equals("Join Game")) {
+
+        if (clients.size() == 0) { // if the game lobby has not been made
+          try {
+            arg1.sendToClient("No Lobby Redirect");
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
 
 
+          //// If the lobby has not reached the maximum capicaty of players /////
+        } else if (clients.size() < playersChosen) {
+          clients.add(arg1); // add client object to game list
+          clientNames.add(arg1.getName()); // add client name to game list
 
-    if (arg0.equals("New")) {
+          // Set the number of Opponents for Client GUI
+          try {
+            arg1.sendToClient(playersChosen - 1);
+          } catch (IOException e1) {
+            e1.printStackTrace();
+          }
 
+          // Tell the client to continue to GamePanel
+          try {
+            arg1.sendToClient("Join Lobby");
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
 
-      if (clients.size() < playersChosen) {
-        clients.add(arg1); // add client to game list
-        clientName.add(arg1.getName());
-        if (clients.size() != 1)
-          sendToGameClients(clientName); // sends all clients, the clients in game for scoreboard
+          // sends all clients, the clients in game for scoreboard
+          if (clients.size() != 1)
+            sendToGameClients(clientNames);
 
+        } else {
+          try {
+            arg1.sendToClient("Join Lobby Redirect");
+          } catch (IOException e) {
+
+            e.printStackTrace();
+          }
+        }
+        if (clients.size() == playersChosen && playersChosen != 0) {
+          log.append("Game Start\n");
+          sendToGameClients(clientNames);
+          turns[0] = 1;
+
+          tellToGo();
+        }
       }
-      if (clients.size() == playersChosen) {
-        log.append("Game Start\n");
-        turns[0] = 1;
 
-        tellToGo();
-      }
-    }
+      else if (command.startsWith("P")) {
+        clients.add(arg1); // add client object to game list
+        clientNames.add(arg1.getName()); // add client name to game list
 
-    // TODO
-    if (arg0.equals("Client needs to set number of players")) {
-      String message = "";
+        playersChosen = Integer.parseInt(Character.toString(command.charAt(1)));
+        turns = new Integer[playersChosen];
+        currScores = new Integer[playersChosen];
+        Arrays.fill(turns, 0);
 
-      if (playersChosen == 0)
-        message = "Make Lobby";
-      else
-        message = "Join Lobby";
+        // Set the number of Opponents for Client GUI
+        try {
+          arg1.sendToClient(playersChosen - 1);
+        } catch (IOException e1) {
+          e1.printStackTrace();
+        }
 
-      try {
-        arg1.sendToClient(message);
-      } catch (IOException e) {
+        // Tell the client to continue to GamePanel
+        try {
+          arg1.sendToClient("Join Lobby");
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      } else if (command.equals("Get Leaderboard Stats")) {
 
-        e.printStackTrace();
+        String query = "SELECT userName FROM TheUser";
+        ArrayList<String> usernameData = new ArrayList<String>();
+        usernameData = db.query(query);
+
+        query = "SELECT userHighscore FROM TheUser";
+        ArrayList<String> highscoreData = new ArrayList<String>();
+        highscoreData = db.query(query);
+
+        String[][] scoreboardData = new String[highscoreData.size()][2];
+
+        for (int i = 0; i < highscoreData.size(); i++) {
+          scoreboardData[i][0] = usernameData.get(i);
+          scoreboardData[i][1] = highscoreData.get(i);
+        }
+
+        Arrays.sort(scoreboardData, new Comparator<String[]>() {
+
+          @Override
+          public int compare(final String[] first, final String[] second) {
+            // here you should usually check that first and second
+            // a) are not null and b) have at least two items
+            // updated after comments: comparing Double, not Strings
+            // makes more sense, thanks Bart Kiers
+            return Double.valueOf(second[1]).compareTo(Double.valueOf(first[1]));
+          }
+        });
+
+
+
+        try {
+          arg1.sendToClient(scoreboardData);
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+
       }
     }
   }
 
 
+
+  private void gameover() {
+    for (int i = 0; i < clientNames.size(); i++) {
+      String query =
+          "SELECT userHighscore FROM TheUser WHERE userName='" + clientNames.get(i) + "' ;";
+      ArrayList<String> queryData = new ArrayList<String>();
+      queryData = db.query(query);
+      int highscore = Integer.valueOf(queryData.get(0));
+
+      if (highscore < currScores[i]) {
+        query = "UPDATE TheUser SET userHighscore= '" + currScores[i] + "' WHERE userName='"
+            + clientNames.get(i) + "' ;";
+        try {
+          db.executeDML(query);
+        } catch (SQLException e) {
+
+          e.printStackTrace();
+        }
+      }
+      System.out.println();
+    }
+    roundCounter = 0;
+    sendToGameClients("Game Over");
+    playersChosen = 0;
+    clients.clear();
+    clientNames.clear();
+
+
+
+  }
+
   // Tells whoever's turn it is to go to Go
   public void tellToGo() {
 
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < playersChosen; i++) {
 
       if (turns[i] == 1) {
         try {
@@ -258,15 +374,21 @@ public class ChatServer extends AbstractServer {
     }
   }
 
+
   // Increments whose turn it is. Wraps around if the fifth client is currently going
   public void nextTurn() {
+
     for (int i = 0; i < clients.size(); i++) {
 
       if (turns[i] == 1) {
         turns[i] = 0;
 
-        if (i == 1) {
+        if (i == clients.size() - 1) {
           turns[0] = 1;
+
+          roundCounter++;
+          System.out.println("RC: " + roundCounter);
+
         } else {
           turns[i + 1] = 1;
         }
@@ -282,12 +404,9 @@ public class ChatServer extends AbstractServer {
     for (int i = 0; i < clients.size(); i++) {
       try {
         clients.get(i).sendToClient(obj);
-      } catch (EOFException e) {
-        e.printStackTrace();
       } catch (IOException e) {
         e.printStackTrace();
       }
-
     }
   }
 

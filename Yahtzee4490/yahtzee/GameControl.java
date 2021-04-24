@@ -1,5 +1,6 @@
 package yahtzee;
 
+import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -22,8 +23,7 @@ public class GameControl implements ActionListener, ItemListener {
   private Integer[] finalScore = new Integer[17];
   private String selection = "";
 
-  // private String username; //Name of User, is set
-  private String order = null;
+
   String whosData = "";
   private int rollCount = 0;
   boolean sendData = true;
@@ -38,6 +38,20 @@ public class GameControl implements ActionListener, ItemListener {
     Arrays.fill(finalScore, -1);
     Arrays.fill(diceValues, 1);
     Arrays.fill(rollable, true);
+  }
+
+  public void gameReset() {
+    GamePanel gamePanel = (GamePanel) container.getComponent(4);
+    Arrays.fill(finalScore, -1);
+    Arrays.fill(diceValues, 1);
+    Arrays.fill(rollable, true);
+    gamePanel.resetUserScoreboard(finalScore);
+    gamePanel.resetScoreboard();
+    sendData = true;
+    allowInput = false;
+    CardLayout cardLayout = (CardLayout) container.getLayout();
+    cardLayout.show(container, "4");
+
   }
 
   // Listens for change in the GUI's state
@@ -127,7 +141,6 @@ public class GameControl implements ActionListener, ItemListener {
 
       GameData data = new GameData(finalScore, diceValues, rollable);
       try {
-        System.out.println("DATA SENT 100p");
         client.sendToServer(data);
       } catch (IOException e) {
         e.printStackTrace();
@@ -142,7 +155,6 @@ public class GameControl implements ActionListener, ItemListener {
     if (rollCount > 0 && sendData) {
       GameData data = new GameData(finalScore, diceValues, rollable);
       try {
-        System.out.println("DATA SENT");
         client.sendToServer(data);
       } catch (IOException e) {
         e.printStackTrace();
@@ -159,6 +171,11 @@ public class GameControl implements ActionListener, ItemListener {
   @Override
   public void itemStateChanged(ItemEvent arg0) {
     selection = (String) arg0.getItem();
+  }
+
+  public void setNumOpps(int num) {
+    GamePanel gamePanel = (GamePanel) container.getComponent(4);
+    gamePanel.setNumOpps(num);
   }
 
   // Only called once right after login || Pre-Game Setup ||
@@ -187,7 +204,6 @@ public class GameControl implements ActionListener, ItemListener {
 
   // Restricts the Client from interacting with the GUI || Pre-Turn ||
   public void waitTurn() {
-    GamePanel gamePanel = (GamePanel) container.getComponent(4);
     allowInput = false;
   }
 
@@ -211,7 +227,7 @@ public class GameControl implements ActionListener, ItemListener {
   // Translates the Category selection into an int that correlates to JButton Array
   private int selectionTranslation(String cat) {
     int num = -1;
-    System.out.println(cat);
+
     switch (cat) {
       case "One":
         num = 1;
@@ -272,9 +288,7 @@ public class GameControl implements ActionListener, ItemListener {
 
   // Updates the dice value and dice location
   private void updateDice() {
-    for (int value : diceValues) {
-      // System.out.println(value);
-    }
+
     GamePanel gamePanel = (GamePanel) container.getComponent(4);
     gamePanel.setDice1(rollable[0], diceValues[0]);
     gamePanel.setDice2(rollable[1], diceValues[1]);

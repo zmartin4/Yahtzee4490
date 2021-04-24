@@ -21,7 +21,7 @@ import javax.swing.JPanel;
 public class GamePanel extends JPanel {
 
 
-  final int numOpps = 1;
+  int numOpps;
   // Dices for the rollable and non-rollable location
   private JButton dice1Keep = new JButton("1Keep");
   private JButton dice1Roll = new JButton("1Roll");
@@ -136,7 +136,15 @@ public class GamePanel extends JPanel {
   JPanel scoresPanel = new JPanel(new GridBagLayout());
   GridBagConstraints scoreC = new GridBagConstraints();
 
+  JPanel scoreboardPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+  JPanel layoutPanel = new JPanel(new BorderLayout(60, 25));
 
+  JPanel diceControlPanel = new JPanel();
+
+
+
+  // Dice Interaction Panel
+  JPanel playPanel = new JPanel(new BorderLayout());
 
   // Style Constants
   Font catFont = new Font("Arial", Font.BOLD, 20);
@@ -270,6 +278,18 @@ public class GamePanel extends JPanel {
   //////////////////////////////////////////
   ///// INITIAL SCOREBOARD SETUPS /////
   /////////////////////////////////////////
+  public void setNumOpps(int num) {
+    oppScore = new ArrayList<JButton[]>();
+    numOpps = num;
+
+    setOppScoreboard();
+    scoreboardPanel.add(scoresPanel);
+    layoutPanel.add(scoreboardPanel, BorderLayout.LINE_START);
+    layoutPanel.add(playPanel, BorderLayout.LINE_END);
+
+    this.add(layoutPanel);
+  }
+
   public void setCategoryButtons() {
 
     // Sets ButtonArray for category LABELS for the scoreboard
@@ -366,7 +386,6 @@ public class GamePanel extends JPanel {
   }
 
   public void setOppScoreboard() {
-
     for (int i = 0; i < numOpps; i++) {
       oppScoreButtons = new JButton[17];
       nameOpp = new JButton();
@@ -429,6 +448,25 @@ public class GamePanel extends JPanel {
 
   }
 
+  public void resetScoreboard() {
+
+    categorySelection.clear();
+    for (String categories : categorySelectionsFINAL)
+      categorySelection.add(categories);
+    setUserScoreboard();
+
+    for (int i = 0; i < oppScore.size(); i++) {
+      for (int j = 0; j < oppScore.get(i).length; j++) {
+        oppScore.get(i)[j].setText("");
+      }
+    }
+
+
+    removeCategorySelection("");
+
+
+
+  }
 
   ////////////////////////////////////////////////////
   ///// Sets Names on the Top of Scoreboard /////
@@ -442,7 +480,8 @@ public class GamePanel extends JPanel {
   public void setOppName(Object oppName) {
     ArrayList<String> oppNames = (ArrayList<String>) oppName;
 
-    for (int i = 0; i < oppScore.size(); i++) {
+    for (int i = 0; i < oppNames.size(); i++) {
+      System.out.println(oppNames.get(i));
       oppScore.get(i)[0].setText(oppNames.get(i));
     }
   }
@@ -515,7 +554,6 @@ public class GamePanel extends JPanel {
   }
 
 
-
   // Removes the chosen category from the JComboBox
   public void removeCategorySelection(String selection) {
 
@@ -538,36 +576,32 @@ public class GamePanel extends JPanel {
 
 
   public GamePanel(GameControl gc) {
+
+
     setCategoryButtons();
     setUserScoreboard();
-    setOppScoreboard();
+
 
     // Overall Panel
-    JPanel layoutPanel = new JPanel(new BorderLayout(60, 25));
     layoutPanel.setBackground(Color.orange);
 
     // Scoreboard Panels
-    JPanel scoreboardPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-    JPanel categoriesPanel = new JPanel(new GridLayout(17, 0, 10, 5));
-    JPanel userScorePanel = new JPanel(new GridLayout(17, 1, 0, 5));
-    JPanel oppScorePanel = new JPanel(new GridLayout(17, 1, 0, 0));
 
+    JPanel categoriesPanel = new JPanel(new GridLayout(17, 0, 10, 5));
 
     JPanel quitPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-    // Dice Interaction Panel
-    JPanel playPanel = new JPanel(new BorderLayout());
 
-    JPanel diceControlPanel = new JPanel();
+
     GridBagConstraints c = new GridBagConstraints();
     JPanel dicePanel = new JPanel(new GridBagLayout());
 
     scoreboardPanel.setBackground(Color.LIGHT_GRAY);
     categoriesPanel.setBackground(Color.LIGHT_GRAY);
-    // userScorePanel.setBackground(color.LIGHT_GRAY);
-    // oppScorePanel.setBackground(color.LIGHT_GRAY);
     scoreboardPanel.add(catP);
-    scoreboardPanel.add(scoresPanel);
+
+
+
     // Category Labels for Scoreboard
 
 
@@ -689,6 +723,7 @@ public class GamePanel extends JPanel {
     rollDice.setFont(buttonFont);
 
     pickCategory = new JComboBox(categorySelection.toArray());
+
     pickCategory.addItemListener(gc);
     pickCategory.setSelectedIndex(categorySelection.size() - 1);
     pickCategory.setPreferredSize(new Dimension(200, 40));
@@ -703,8 +738,6 @@ public class GamePanel extends JPanel {
 
     // adding sections to the scoreboard
     scoreboardPanel.add(categoriesPanel);
-    // scoreboardPanel.add(userScorePanel);
-    // scoreboardPanel.add(oppScorePanel);
     quitPanel.add(quitButton);
 
     // add dice selection
@@ -719,12 +752,7 @@ public class GamePanel extends JPanel {
 
     // add all panels
     layoutPanel.add(quitPanel, BorderLayout.PAGE_START);
-    layoutPanel.add(scoreboardPanel, BorderLayout.LINE_START);
-    // layoutPanel.add(catP, BorderLayout.LINE_START);
-    // layoutPanel.add(scoresPanel, BorderLayout.CENTER);
-    layoutPanel.add(playPanel, BorderLayout.LINE_END);
 
-    this.add(layoutPanel);
   }
 
 

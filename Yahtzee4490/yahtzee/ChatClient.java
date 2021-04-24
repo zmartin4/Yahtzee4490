@@ -9,6 +9,7 @@ public class ChatClient extends AbstractClient {
   CreateAccountControl cac;
   GameControl gc;
   MainMenuControl mmc;
+  LeaderboardControl lbc;
 
   int id;
   String username;
@@ -24,50 +25,58 @@ public class ChatClient extends AbstractClient {
   @Override
   public void handleMessageFromServer(Object arg0) {
 
-
-    if (arg0.equals("NAS")) {
-      // System.out.println("ChatClient - New Account");
+    /////// Login and Create Account //////////
+    if (arg0.equals("NAS")) { // If account created successfully
       cac.createAccountSuccess();
-
-    } else if (arg0.equals("LS")) {
-      // System.out.println("ChatClient - Login");
+    } else if (arg0.equals("LS")) { // If account logged in successfully
       lc.loginSuccess();
-
-    } else if (arg0.equals("LF")) {
-      // System.out.println("ChatClient - Login Failed");
+    } else if (arg0.equals("LF")) {// If account login failed
       lc.displayError("Incorrect Username or Password");
 
-    } else if (arg0.toString().startsWith("uName,")) {
-      System.out.println("ChatClient - Get Username");
+
+      ////// Main Menu Redirection //////
+    } else if (arg0.equals("New Lobby")) { // If the first person to select New Game
+      mmc.newLobby();
+    } else if (arg0.equals("New Lobby Redirect")) { // If game lobby is already made
+      mmc.newLobbyRedirect();
+    } else if (arg0.equals("Join Lobby")) { // If able to join game lobby
+      mmc.joinLobby();
+    } else if (arg0.equals("Join Lobby Redirect")) { // If game lobby is full
+      mmc.joinLobbyRedirect();
+    } else if (arg0.equals("No Lobby Redirect")) { // If game lobby has not been made
+      mmc.noLobbyRedirect();
+
+
+      ////// Yahtzee Game Information Setup //////
+    } else if (arg0.toString().startsWith("uName,")) { // Sets clients Username in GameControl
       username = arg0.toString().substring(6);
       gc.setUsername(arg0.toString().substring(6));
-
-      // TODO
-    } else if (arg0.equals("Make Lobby")) { // TODO
-      mmc.setLobby();
-    } else if (arg0.equals("Join Lobby")) { // TODO
-      mmc.setLobby();
-
-      // Initial Scoreboard Setup | Dynamically sets Opponetes names when they 'New Game'
-    } else if (arg0 instanceof ArrayList) {
+    } else if (arg0 instanceof Integer) { // Sets the number of Opponents
+      int numP = (int) arg0;
+      gc.setNumOpps(numP);
+    } else if (arg0 instanceof ArrayList) {// Dynamically sets Opponents names when they Join Lobby
+      System.out.println("ArrayList");
       ArrayList<String> oppUsernames = (ArrayList<String>) arg0;
       oppUsernames.remove(username);
       gc.setOppUsernames(oppUsernames);
+    } else if (arg0.equals("Game Over")) { // If the game is over
+      gc.gameReset();
 
 
-    } else if (arg0.equals("Go")) {
+      ////// Leaderboard Information //////
+    } else if (arg0 instanceof String[][]) { // Sets the Leaderboard Data
+      lbc.setLeaderboardData(arg0);
+
+      ////// Yahtzee Game Flow Control //////
+    } else if (arg0.equals("Go")) { // Allows a client to interact with GamePanel
       gc.goTurn();
-      System.out.println("GO");
-    } else if (arg0.equals("Wait")) {
-      System.out.println("WAIT");
+    } else if (arg0.equals("Wait")) { // Does not allow client interaction with GamePanel
       gc.waitTurn();
-
-    } else if (arg0 instanceof GameData) {
+    } else if (arg0 instanceof GameData) { // Sends GameData to Client
       gc.setGameData(arg0);
-    } else if (arg0 instanceof String) {
+    } else if (arg0 instanceof String) { // Sends the username of the GameData
       gc.setWhosData(arg0);
     }
-
 
 
   }
@@ -81,8 +90,6 @@ public class ChatClient extends AbstractClient {
 
   }
 
-
-
   public void setLoginControl(LoginControl lc) {
     this.lc = lc;
   }
@@ -93,5 +100,14 @@ public class ChatClient extends AbstractClient {
 
   public void setGameControl(GameControl gc) {
     this.gc = gc;
+  }
+
+  public void setMainMenuControl(MainMenuControl mmc) {
+    this.mmc = mmc;
+  }
+
+  public void setLeaderboardControl(LeaderboardControl lbc) {
+    this.lbc = lbc;
+
   }
 }

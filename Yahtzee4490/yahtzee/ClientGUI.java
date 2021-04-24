@@ -42,10 +42,17 @@ public class ClientGUI extends JFrame {
     GameControl gc = new GameControl(container, client);
     LeaderboardControl lbc = new LeaderboardControl(container);
 
-    // ContactPanel cp = new ContactPanel(container, client);
+
     Color color = new Color(215, 45, 53);
+
+
+
     UIManager.getLookAndFeelDefaults().put("Panel.background", color);
-    UIManager.getLookAndFeelDefaults().put("Button.background", color.WHITE);
+    UIManager.getLookAndFeelDefaults().put("Button.background", Color.WHITE);
+    UIManager.getLookAndFeelDefaults().put("OptionPane.background", color);
+    UIManager.getLookAndFeelDefaults().put("OptionPane.messageForeground", Color.WHITE);
+    UIManager.getLookAndFeelDefaults().put("ComboBox.background", Color.WHITE);
+    UIManager.getLookAndFeelDefaults().put("ComboBox.selectionBackground", Color.WHITE);
 
     // Create the four views. (need the controller to register with the Panels
     JPanel view1 = new InitialPanel(ic);
@@ -67,6 +74,8 @@ public class ClientGUI extends JFrame {
     client.setLoginControl(lc);
     client.setCreateAccountControl(cac);
     client.setGameControl(gc);
+    client.setMainMenuControl(mmc);
+    client.setLeaderboardControl(lbc);
 
 
 

@@ -13,22 +13,26 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class LeaderboardPanel extends JPanel {
+  GridBagConstraints c = new GridBagConstraints();
+  JPanel lbScores = new JPanel(new GridBagLayout());
+  JPanel lbPanel = new JPanel();
+  JButton[] username = new JButton[6];
+  JButton[] score = new JButton[6];
+  Font labelFont = new Font("Arial", Font.PLAIN, 45);
+  Font lbFont = new Font("Arial", Font.PLAIN, 32);
+  Dimension size = new Dimension(200, 50);
 
   public LeaderboardPanel(LeaderboardControl lbc) {
 
     // Style Constants
 
     Font titleFont = new Font("Arial", Font.BOLD, 98);
-    Font labelFont = new Font("Arial", Font.PLAIN, 45);
-    Font lbFont = new Font("Arial", Font.PLAIN, 32);
-    Dimension size = new Dimension(200, 50);
+
 
     JPanel layoutPanel = new JPanel(new BorderLayout(20, 20));
 
 
 
-    JButton name;
-    JButton score;
     JLabel title = new JLabel("Leaderboard");
     JButton returnButton;
 
@@ -39,9 +43,6 @@ public class LeaderboardPanel extends JPanel {
     title.setFont(titleFont);
     title.setForeground(Color.white);
 
-    GridBagConstraints c = new GridBagConstraints();
-    JPanel lbScores = new JPanel(new GridBagLayout());
-    JPanel lbPanel = new JPanel();
 
     lbPanel.setPreferredSize(new Dimension(650, 700));
     lbScores.setBackground(Color.GRAY);
@@ -52,24 +53,6 @@ public class LeaderboardPanel extends JPanel {
     returnButton.setPreferredSize(new Dimension(300, 50));
     returnButton.setFont(lbFont);
 
-
-
-    for (int i = 0; i < 6; i++) {
-      c.gridx = 0;
-      c.gridy = i;
-      c.insets = new Insets(10, 40, 10, 40);
-      name = new JButton(String.valueOf(i));
-      name.setPreferredSize(size);
-      name.setFont(lbFont);
-      lbScores.add(name, c);
-
-      c.gridx = 1;
-
-      score = new JButton(String.valueOf(i * 10));
-      score.setPreferredSize(size);
-      score.setFont(lbFont);
-      lbScores.add(score, c);
-    }
 
 
     // Yahtzee logo
@@ -93,5 +76,27 @@ public class LeaderboardPanel extends JPanel {
 
 
 
+  }
+
+  public void showLeaderboardData(String[][] leaderboardData) {
+
+    for (int i = 0; i < 6; i++) {
+      System.out.println(leaderboardData[i][0] + " " + leaderboardData[i][1]);
+      c.gridx = 0;
+      c.gridy = i;
+      c.insets = new Insets(10, 40, 10, 40);
+      username[i] = new JButton();
+      username[i].setText(leaderboardData[i][0]);
+      username[i].setPreferredSize(size);
+      username[i].setFont(lbFont);
+      lbScores.add(username[i], c);
+
+      c.gridx = 1;
+      score[i] = new JButton();
+      score[i].setText(leaderboardData[i][1]);
+      score[i].setPreferredSize(size);
+      score[i].setFont(lbFont);
+      lbScores.add(score[i], c);
+    }
   }
 }

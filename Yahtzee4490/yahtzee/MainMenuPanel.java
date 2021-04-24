@@ -10,9 +10,11 @@ import java.awt.GridLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class MainMenuPanel extends JPanel {
+  JPanel layoutPanel = new JPanel(new BorderLayout(50, 50)); // Overall Layout
 
   public MainMenuPanel(MainMenuControl mmc) {
 
@@ -22,7 +24,7 @@ public class MainMenuPanel extends JPanel {
     Font logoutFont = new Font("Arial", Font.PLAIN, 24);
 
     // Layout Initialization
-    JPanel layoutPanel = new JPanel(new BorderLayout(50, 50)); // Overall Layout
+
     JPanel buttonPanel = new JPanel(new GridLayout(3, 1, 50, 50)); // Contains Buttons
     JPanel logoutPanel = new JPanel(new FlowLayout()); // Contains logout Button
     JLabel bufferPanel = new JLabel(); // Spacing for GUI
@@ -79,5 +81,22 @@ public class MainMenuPanel extends JPanel {
     layoutPanel.add(logoutPanel, BorderLayout.SOUTH);
     this.add(layoutPanel);
 
+  }
+
+  public String createLobby() {
+
+    String[] possibleValues = {"2", "3", "4"};
+    String selectedValue = null;
+
+    while (selectedValue == null) {
+      selectedValue = (String) JOptionPane.showInputDialog(null, "Choose one", "Input",
+          JOptionPane.INFORMATION_MESSAGE, null, possibleValues, possibleValues[0]);
+    }
+
+    return selectedValue;
+  }
+
+  public void redirect(String msg) {
+    JOptionPane.showMessageDialog(null, msg);
   }
 }
