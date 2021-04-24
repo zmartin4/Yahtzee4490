@@ -32,6 +32,8 @@ public class ChatClient extends AbstractClient {
       lc.loginSuccess();
     } else if (arg0.equals("LF")) {// If account login failed
       lc.displayError("Incorrect Username or Password");
+    } else if (arg0.equals("ALI")) {// If account login failed
+      lc.displayError("That user has already logged in");
 
 
       ////// Main Menu Redirection //////
@@ -72,6 +74,9 @@ public class ChatClient extends AbstractClient {
       gc.goTurn();
     } else if (arg0.equals("Wait")) { // Does not allow client interaction with GamePanel
       gc.waitTurn();
+    } else if (arg0.equals("Lobby Size Error")) { // Does not allow client interaction with
+                                                  // GamePanel
+      gc.lobbyMessage();
     } else if (arg0 instanceof GameData) { // Sends GameData to Client
       gc.setGameData(arg0);
     } else if (arg0 instanceof String) { // Sends the username of the GameData

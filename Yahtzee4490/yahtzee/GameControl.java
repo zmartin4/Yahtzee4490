@@ -45,6 +45,7 @@ public class GameControl implements ActionListener, ItemListener {
     Arrays.fill(finalScore, -1);
     Arrays.fill(diceValues, 1);
     Arrays.fill(rollable, true);
+    gamePanel.showGameMessage("Game Over. Returning to Main Menu");
     gamePanel.resetUserScoreboard(finalScore);
     gamePanel.resetScoreboard();
     sendData = true;
@@ -61,9 +62,21 @@ public class GameControl implements ActionListener, ItemListener {
     String command = ae.getActionCommand();
     GamePanel gamePanel = (GamePanel) container.getComponent(4);
 
+    if (command.equals("Quit Game")) {
+      try {
+        client.sendToServer("Quit Game");
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+
+      CardLayout cardLayout = (CardLayout) container.getLayout();
+      cardLayout.show(container, "4");
+
+    }
 
     if (!allowInput)
       return;
+
 
 
     if (command == "Roll Dice" && rollCount < 3) {
@@ -207,6 +220,15 @@ public class GameControl implements ActionListener, ItemListener {
     allowInput = false;
   }
 
+  public void lobbyMessage() {
+    GamePanel gamePanel = (GamePanel) container.getComponent(4);
+    gamePanel.showGameMessage("Everyone else left the lobby. Returning to Main Menu");
+
+    CardLayout cardLayout = (CardLayout) container.getLayout();
+    cardLayout.show(container, "4");
+
+  }
+
   // Sets which client the GameData came from || Post-Turn ||
   public void setWhosData(Object whosData) {
     this.whosData = (String) whosData;
@@ -217,7 +239,6 @@ public class GameControl implements ActionListener, ItemListener {
   public void setGameData(Object arg0) {
     GamePanel gamePanel = (GamePanel) container.getComponent(4);
     gamePanel.updateOppGame(arg0, whosData);
-
   }
 
   ////////////////////////////////////////////

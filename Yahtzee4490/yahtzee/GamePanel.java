@@ -14,6 +14,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 
@@ -135,9 +136,8 @@ public class GamePanel extends JPanel {
   JPanel catP = new JPanel(new GridBagLayout());
   JPanel scoresPanel = new JPanel(new GridBagLayout());
   GridBagConstraints scoreC = new GridBagConstraints();
-
   JPanel scoreboardPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-  JPanel layoutPanel = new JPanel(new BorderLayout(60, 25));
+  JPanel layoutPanel = new JPanel(new BorderLayout(40, 25));
 
   JPanel diceControlPanel = new JPanel();
 
@@ -372,9 +372,7 @@ public class GamePanel extends JPanel {
       userScoreButtons[i].setPreferredSize(new Dimension(75, 35));
       userScoreButtons[i].setBackground(Color.white);
 
-      if (i == 0) {
-        userScoreButtons[i].setBackground(Color.magenta);
-      }
+
       scoreC.gridx = 0;
       scoreC.gridy = spacing;
       scoreC.insets = new Insets(3, 7, 3, 23);
@@ -435,9 +433,7 @@ public class GamePanel extends JPanel {
         scoreC.gridx = i + 1;
         scoreC.gridy = spacing;
         scoreC.insets = new Insets(3, 7, 3, 7);
-        if (j == 0) {
-          oppScoreButtons[j].setBackground(Color.magenta);
-        }
+
 
         if (j == userScoreButtons.length - 1 || j == 0)
           scoreC.insets = new Insets(10, 7, 10, 7);
@@ -457,9 +453,10 @@ public class GamePanel extends JPanel {
 
     for (int i = 0; i < oppScore.size(); i++) {
       for (int j = 0; j < oppScore.get(i).length; j++) {
-        oppScore.get(i)[j].setText("");
+        // oppScore.get(i)[j].setText("");
       }
     }
+    oppScore.clear();
 
 
     removeCategorySelection("");
@@ -483,6 +480,7 @@ public class GamePanel extends JPanel {
     for (int i = 0; i < oppNames.size(); i++) {
       System.out.println(oppNames.get(i));
       oppScore.get(i)[0].setText(oppNames.get(i));
+      oppScore.get(i)[0].setFont(nameFont);
     }
   }
 
@@ -490,6 +488,11 @@ public class GamePanel extends JPanel {
   // Called Internally from GameControl
   // Updates the users scoreboard values as dice are being thrown
   public void updateUserScoreboard(Integer[] userScore, Integer[] finalScore) {
+    for (int i = 0; i < oppScore.size(); i++) {
+      for (int j = 1; j < oppScore.get(i).length; j++) {
+        oppScore.get(i)[j].setBackground(yourTurn);
+      }
+    }
 
     // Add all scores to userScoreboard
     for (int i = 1; i < userScore.length; i++) {
@@ -497,6 +500,7 @@ public class GamePanel extends JPanel {
       if (i == 7 && finalScore[i] == -1 || i == 15 && finalScore[i] == -1)
         continue;
       userScoreButtons[i].setText(String.valueOf(userScore[i]));
+      userScoreButtons[i].setForeground(Color.red);
     }
 
 
@@ -504,7 +508,7 @@ public class GamePanel extends JPanel {
     for (int i = 1; i < finalScore.length; i++) {
       if (finalScore[i] != -1) {
         userScoreButtons[i].setText(String.valueOf(finalScore[i]));
-        userScoreButtons[i].setForeground(Color.red);
+        userScoreButtons[i].setForeground(Color.black);
       }
     }
   }
@@ -520,8 +524,10 @@ public class GamePanel extends JPanel {
     for (int i = 0; i < oppScore.size(); i++) {
       if (oppScore.get(i)[0].getText().equals(whosData)) {
         for (int j = 1; j < oppScore.get(i).length; j++) {
-          if (score[j] != -1)
+          oppScore.get(i)[j].setBackground(yourTurn);
+          if (score[j] != -1) {
             oppScore.get(i)[j].setText(String.valueOf(score[j]));
+          }
         }
       }
     }
@@ -538,6 +544,10 @@ public class GamePanel extends JPanel {
   public void setTurnIndicator() {
     for (int i = 1; i < userScoreButtons.length; i++)
       userScoreButtons[i].setBackground(yourTurn);
+  }
+
+  public void showGameMessage(String msg) {
+    JOptionPane.showMessageDialog(null, msg);
   }
 
   // Sets the color of the User scoreboard back to white and finalScore colors
@@ -576,14 +586,12 @@ public class GamePanel extends JPanel {
 
 
   public GamePanel(GameControl gc) {
-
-
     setCategoryButtons();
     setUserScoreboard();
 
 
     // Overall Panel
-    layoutPanel.setBackground(Color.orange);
+
 
     // Scoreboard Panels
 

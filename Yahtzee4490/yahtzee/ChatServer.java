@@ -22,8 +22,9 @@ public class ChatServer extends AbstractServer {
   int playersChosen = 0;
   int roundCounter = 0;
   private GameData gameData;
-  private ArrayList<ConnectionToClient> clients;
-  private ArrayList<String> clientNames;
+  private ArrayList<ConnectionToClient> clients; // CtC objects of clients that are in game
+  private ArrayList<String> loggedInClients; // Names of Clients that are logged in
+  private ArrayList<String> clientNames; // Names of Clients that are in game
   Integer[] turns;
   Integer[] currScores;
 
@@ -32,8 +33,10 @@ public class ChatServer extends AbstractServer {
   public ChatServer() {
     super(12345);
     clients = new ArrayList<ConnectionToClient>();
+    loggedInClients = new ArrayList<String>();
     clientNames = new ArrayList<String>();
   }
+
 
   public ChatServer(int port) {
     super(port);
@@ -63,9 +66,66 @@ public class ChatServer extends AbstractServer {
     this.gameData = gameData;
   }
 
+  // Validates Logged In ArrayList for Hard Quits From MainMenu
+  private void revalidateLogins() {
+    Thread[] inServer = this.getClientConnections();
+    ArrayList<String> toRemove = new ArrayList<String>();
+    Boolean print = false;
+
+
+    for (String lic : loggedInClients) {
+      System.out.println(lic);
+      Boolean isConnected = false;
+
+      for (Thread c : inServer) {
+        if (lic.contains(c.getName()))
+          isConnected = true;
+      }
+      if (!isConnected)
+        toRemove.add(lic);
+    }
+
+    for (String remove : toRemove) {
+      loggedInClients.remove(remove);
+      print = true;
+    }
+
+    if (print) {
+      for (String lic : loggedInClients)
+        System.out.println(lic);
+    }
+  }
+
+  // Validates Arraylist for Hard Quits from Game Lobby
+  private void revalidateGamePlayers() {
+
+    ArrayList<ConnectionToClient> toRemove = new ArrayList<ConnectionToClient>();
+
+    for (ConnectionToClient d : clients) {
+      Boolean isConnected = false;
+      for (String lic : loggedInClients) {
+        if (d.getName().equals(lic))
+          isConnected = true;
+      }
+      if (!isConnected)
+        toRemove.add(d);
+    }
+
+    for (ConnectionToClient remove : toRemove) {
+      clients.remove(remove);
+
+    }
+  }
 
   @Override
   protected void handleMessageFromClient(Object arg0, ConnectionToClient arg1) {
+
+    revalidateLogins();
+    revalidateGamePlayers();
+    if (clients.size() == 0) {
+      gameover(false);
+    }
+
 
     System.out.println(arg0.toString() + " ||||  " + arg1.getId());
 
@@ -85,17 +145,27 @@ public class ChatServer extends AbstractServer {
 
 
       if (queryData != null) {
-        try {
-          arg1.sendToClient("LS");
+        if (loggedInClients.contains(loginData.getUsername())) {
           try {
-            arg1.sendToClient("uName," + loginData.getUsername()); // Sets username in ChatClient
-            arg1.setName(loginData.getUsername()); // Sets the ThreadName to the Username entered
-
+            arg1.sendToClient("ALI");
           } catch (IOException e) {
             e.printStackTrace();
           }
-        } catch (IOException e) {
-          e.printStackTrace();
+        } else {
+          try {
+            arg1.sendToClient("LS");
+            try {
+              arg1.sendToClient("uName," + loginData.getUsername()); // Sets username in ChatClient
+              arg1.setName(loginData.getUsername()); // Sets the ThreadName to the Username entered
+              loggedInClients.add(arg1.getName());
+
+
+            } catch (IOException e) {
+              e.printStackTrace();
+            }
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
         }
       } else {
         try {
@@ -152,6 +222,11 @@ public class ChatServer extends AbstractServer {
     if (arg0 instanceof GameData) {
       GameData gameData = (GameData) arg0;
 
+      if (clients.size() == 1) {
+        sendToGameClients("Lobby Size Error");
+        playersChosen = 0;
+      }
+
       sendToGameClients(arg1.getName()); // send clients what client sent the data
       sendToGameClients(gameData); // send clients the GameData
 
@@ -176,8 +251,7 @@ public class ChatServer extends AbstractServer {
         }
         nextTurn();
         if (roundCounter == 13) {
-
-          gameover();
+          gameover(true);
         }
         tellToGo();
 
@@ -253,9 +327,9 @@ public class ChatServer extends AbstractServer {
 
           tellToGo();
         }
-      }
 
-      else if (command.startsWith("P")) {
+
+      } else if (command.startsWith("P")) {
         clients.add(arg1); // add client object to game list
         clientNames.add(arg1.getName()); // add client name to game list
 
@@ -306,39 +380,65 @@ public class ChatServer extends AbstractServer {
           }
         });
 
-
-
         try {
           arg1.sendToClient(scoreboardData);
         } catch (IOException e) {
           e.printStackTrace();
         }
 
+
+      } else if (command.equals("Quit Game")) {
+
+        for (int i = 0; i < clients.size(); i++) {
+          if (clients.get(i).getName().equals(arg1.getName())) {
+            turns[i] = -1;
+            break;
+          }
+
+        }
+
+        clients.remove(arg1);
+        loggedInClients.remove(arg1.getName());
+        if (clients.size() <= 1) {
+          gameover(false);
+          sendToGameClients("Lobby Size Error");
+
+
+        }
       }
+    }
+    revalidateLogins();
+    System.out.println("After 2nd Val");
+    for (String f : loggedInClients) {
+      System.out.println("= " + f);
     }
   }
 
 
 
-  private void gameover() {
-    for (int i = 0; i < clientNames.size(); i++) {
-      String query =
-          "SELECT userHighscore FROM TheUser WHERE userName='" + clientNames.get(i) + "' ;";
-      ArrayList<String> queryData = new ArrayList<String>();
-      queryData = db.query(query);
-      int highscore = Integer.valueOf(queryData.get(0));
+  private void gameover(boolean logScore) {
+    if (logScore) {
+      for (int i = 0; i < clientNames.size(); i++) {
+        if (turns[i] == -1)
+          continue;
+        String query =
+            "SELECT userHighscore FROM TheUser WHERE userName='" + clientNames.get(i) + "' ;";
+        ArrayList<String> queryData = new ArrayList<String>();
+        queryData = db.query(query);
+        int highscore = Integer.valueOf(queryData.get(0));
 
-      if (highscore < currScores[i]) {
-        query = "UPDATE TheUser SET userHighscore= '" + currScores[i] + "' WHERE userName='"
-            + clientNames.get(i) + "' ;";
-        try {
-          db.executeDML(query);
-        } catch (SQLException e) {
+        if (highscore < currScores[i]) {
+          query = "UPDATE TheUser SET userHighscore= '" + currScores[i] + "' WHERE userName='"
+              + clientNames.get(i) + "' ;";
+          try {
+            db.executeDML(query);
+          } catch (SQLException e) {
 
-          e.printStackTrace();
+            e.printStackTrace();
+          }
         }
+        System.out.println();
       }
-      System.out.println();
     }
     roundCounter = 0;
     sendToGameClients("Game Over");
@@ -353,7 +453,7 @@ public class ChatServer extends AbstractServer {
   // Tells whoever's turn it is to go to Go
   public void tellToGo() {
 
-    for (int i = 0; i < playersChosen; i++) {
+    for (int i = 0; i < clients.size(); i++) {
 
       if (turns[i] == 1) {
         try {
@@ -362,7 +462,7 @@ public class ChatServer extends AbstractServer {
           e.printStackTrace();
         }
 
-      } else {
+      } else if (turns[i] == 0) {
 
         try {
           clients.get(i).sendToClient("Wait");
@@ -375,7 +475,7 @@ public class ChatServer extends AbstractServer {
   }
 
 
-  // Increments whose turn it is. Wraps around if the fifth client is currently going
+  // Increments whose turn it is.
   public void nextTurn() {
 
     for (int i = 0; i < clients.size(); i++) {
@@ -383,18 +483,49 @@ public class ChatServer extends AbstractServer {
       if (turns[i] == 1) {
         turns[i] = 0;
 
+
+
         if (i == clients.size() - 1) {
-          turns[0] = 1;
+          for (int j = 0; j < clients.size(); j++) {
+            if (turns[j] != -1) {
+              turns[j] = 1;
+              break;
+            }
+          }
+
 
           roundCounter++;
           System.out.println("RC: " + roundCounter);
 
         } else {
-          turns[i + 1] = 1;
+
+          for (int j = i; j < clients.size(); j++) {
+            if (turns[j + 1] != -1) {
+              turns[j + 1] = 1;
+              break;
+            }
+          }
+
+          Boolean noNext = false;
+          for (int k = 0; k < turns.length; k++) {
+            if (turns[k] == 1) {
+              noNext = true;
+              break;
+            }
+          }
+
+          if (!noNext) {
+            for (int m = 0; m < i; m++) {
+              if (turns[m] != -1)
+                turns[m] = 1;
+            }
+          }
+
         }
         break;
       }
     }
+
   }
 
   // Sends to all clients who are currently in the game (sendToAllClients would include people who
@@ -440,7 +571,7 @@ public class ChatServer extends AbstractServer {
   }
 
   protected void clientConnected(ConnectionToClient client) {
-    log.append("Client Connected \n");
+    log.append("\nClient Connected");
 
   }
 

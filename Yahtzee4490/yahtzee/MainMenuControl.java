@@ -43,6 +43,11 @@ public class MainMenuControl implements ActionListener {
       // CardLayout cardLayout = (CardLayout) container.getLayout();
       // cardLayout.show(container, "6");
     } else if (command == "Log Out") {
+      try {
+        client.sendToServer("Logged Out");
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
       CardLayout cardLayout = (CardLayout) container.getLayout();
       cardLayout.show(container, "2");
 
