@@ -13,11 +13,11 @@ public class ClientGUI extends JFrame {
 
 
   // Constructor that creates the client GUI.
-  public ClientGUI() {
+  public ClientGUI(String host, String port) {
     ChatClient client = new ChatClient();
 
-    client.setHost("localhost");
-    client.setPort(8300);
+    client.setHost(host);
+    client.setPort(Integer.parseInt(port));
     try {
       client.openConnection();
     } catch (IOException e) {
@@ -95,6 +95,6 @@ public class ClientGUI extends JFrame {
 
   // Main function that creates the client GUI when the program is started.
   public static void main(String[] args) {
-    new ClientGUI();
+    new ClientGUI(args[0], args[1]);
   }
 }
