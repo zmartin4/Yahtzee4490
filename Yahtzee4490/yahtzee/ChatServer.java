@@ -19,14 +19,15 @@ public class ChatServer extends AbstractServer {
 
 
 
-  int playersChosen = 0;
-  int roundCounter = 0;
   private GameData gameData;
   private ArrayList<ConnectionToClient> clients; // CtC objects of clients that are in game
   private ArrayList<String> loggedInClients; // Names of Clients that are logged in
   private ArrayList<String> clientNames; // Names of Clients that are in game
-  Integer[] turns;
-  Integer[] currScores;
+
+  Integer[] turns; // 0 = Not Their Turn, 1 = Their Turn, -1 = No longer in lobby
+  Integer[] currScores; // Running total for each client
+  int playersChosen = 0;
+  int roundCounter = 0;
 
 
 
@@ -74,7 +75,6 @@ public class ChatServer extends AbstractServer {
 
 
     for (String lic : loggedInClients) {
-      System.out.println(lic);
       Boolean isConnected = false;
 
       for (Thread c : inServer) {
@@ -87,7 +87,7 @@ public class ChatServer extends AbstractServer {
 
     for (String remove : toRemove) {
       loggedInClients.remove(remove);
-      print = true;
+      print = false;
     }
 
     if (print) {
@@ -211,8 +211,6 @@ public class ChatServer extends AbstractServer {
           arg1.sendToClient("NAS");
           arg1.setName(createAccountData.getUsername());
           arg1.sendToClient(arg1.getName()); // send client their username
-
-
         } catch (IOException e) {
           e.printStackTrace();
         }
@@ -254,12 +252,10 @@ public class ChatServer extends AbstractServer {
           gameover(true);
         }
         tellToGo();
-
-
-
       }
-
     }
+
+
     if (arg0 instanceof String) { // Redirects Client on the MainMenu depending on the game state
       String command = (String) arg0;
 
@@ -268,10 +264,8 @@ public class ChatServer extends AbstractServer {
 
         if (playersChosen == 0) {
           message = "New Lobby"; // New Lobby - playersChosen not set
-
         } else
-          message = "New Lobby Redirect"; // Redirect to join the created lobby - playersChosen is
-                                          // set
+          message = "New Lobby Redirect"; // Redirect to join lobby - playersChosen is set
 
         try {
           arg1.sendToClient(message);
@@ -288,24 +282,16 @@ public class ChatServer extends AbstractServer {
             e.printStackTrace();
           }
 
-
           //// If the lobby has not reached the maximum capicaty of players /////
         } else if (clients.size() < playersChosen) {
           clients.add(arg1); // add client object to game list
           clientNames.add(arg1.getName()); // add client name to game list
 
-          // Set the number of Opponents for Client GUI
           try {
-            arg1.sendToClient(playersChosen - 1);
+            arg1.sendToClient(playersChosen - 1); // Set the number of Opponents for Client GUI
+            arg1.sendToClient("Join Lobby"); // Tell the client to continue to GamePanel
           } catch (IOException e1) {
             e1.printStackTrace();
-          }
-
-          // Tell the client to continue to GamePanel
-          try {
-            arg1.sendToClient("Join Lobby");
-          } catch (IOException e) {
-            e.printStackTrace();
           }
 
           // sends all clients, the clients in game for scoreboard
@@ -316,7 +302,6 @@ public class ChatServer extends AbstractServer {
           try {
             arg1.sendToClient("Join Lobby Redirect");
           } catch (IOException e) {
-
             e.printStackTrace();
           }
         }
@@ -324,11 +309,11 @@ public class ChatServer extends AbstractServer {
           log.append("Game Start\n");
           sendToGameClients(clientNames);
           turns[0] = 1;
-
           tellToGo();
         }
 
 
+        /// \\\ Sets the number of clients internally ///\\\
       } else if (command.startsWith("P")) {
         clients.add(arg1); // add client object to game list
         clientNames.add(arg1.getName()); // add client name to game list
@@ -338,19 +323,16 @@ public class ChatServer extends AbstractServer {
         currScores = new Integer[playersChosen];
         Arrays.fill(turns, 0);
 
-        // Set the number of Opponents for Client GUI
+
+        /// \\\ Tell the client to continue to GamePanel and sets number of Opponents ///\\\
         try {
           arg1.sendToClient(playersChosen - 1);
+          arg1.sendToClient("Join Lobby");
         } catch (IOException e1) {
           e1.printStackTrace();
         }
 
-        // Tell the client to continue to GamePanel
-        try {
-          arg1.sendToClient("Join Lobby");
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
+        //// \\\ Gets and parses leaderboard stats from database ///\\\
       } else if (command.equals("Get Leaderboard Stats")) {
 
         String query = "SELECT userName FROM TheUser";
@@ -372,10 +354,6 @@ public class ChatServer extends AbstractServer {
 
           @Override
           public int compare(final String[] first, final String[] second) {
-            // here you should usually check that first and second
-            // a) are not null and b) have at least two items
-            // updated after comments: comparing Double, not Strings
-            // makes more sense, thanks Bart Kiers
             return Double.valueOf(second[1]).compareTo(Double.valueOf(first[1]));
           }
         });
@@ -386,7 +364,7 @@ public class ChatServer extends AbstractServer {
           e.printStackTrace();
         }
 
-
+        /// \\\ If a client quits, it adpats game aspects ///\\\
       } else if (command.equals("Quit Game")) {
 
         for (int i = 0; i < clients.size(); i++) {
@@ -394,7 +372,6 @@ public class ChatServer extends AbstractServer {
             turns[i] = -1;
             break;
           }
-
         }
 
         clients.remove(arg1);
@@ -402,20 +379,14 @@ public class ChatServer extends AbstractServer {
         if (clients.size() <= 1) {
           gameover(false);
           sendToGameClients("Lobby Size Error");
-
-
         }
       }
     }
     revalidateLogins();
-    System.out.println("After 2nd Val");
-    for (String f : loggedInClients) {
-      System.out.println("= " + f);
-    }
   }
 
 
-
+  // Resets all of the game elements and if true, logs into database
   private void gameover(boolean logScore) {
     if (logScore) {
       for (int i = 0; i < clientNames.size(); i++) {
@@ -474,16 +445,14 @@ public class ChatServer extends AbstractServer {
     }
   }
 
-
   // Increments whose turn it is.
+  // 0 = Not Their Turn, 1 = Their Turn, -1 = No longer in lobby
   public void nextTurn() {
 
     for (int i = 0; i < clients.size(); i++) {
 
       if (turns[i] == 1) {
         turns[i] = 0;
-
-
 
         if (i == clients.size() - 1) {
           for (int j = 0; j < clients.size(); j++) {
@@ -493,13 +462,12 @@ public class ChatServer extends AbstractServer {
             }
           }
 
-
           roundCounter++;
           System.out.println("RC: " + roundCounter);
 
         } else {
 
-          for (int j = i; j < clients.size(); j++) {
+          for (int j = i; j < clients.size(); j++) { // Skips clients with -1
             if (turns[j + 1] != -1) {
               turns[j + 1] = 1;
               break;
@@ -507,7 +475,7 @@ public class ChatServer extends AbstractServer {
           }
 
           Boolean noNext = false;
-          for (int k = 0; k < turns.length; k++) {
+          for (int k = 0; k < turns.length; k++) { // Checks if there is 1 in any space
             if (turns[k] == 1) {
               noNext = true;
               break;
@@ -515,12 +483,19 @@ public class ChatServer extends AbstractServer {
           }
 
           if (!noNext) {
-            for (int m = 0; m < i; m++) {
-              if (turns[m] != -1)
+            noNext = false;
+            for (int m = 0; m < i; m++) { // If there isn't a 1, loop back around to front
+              if (turns[m] != -1) {
                 turns[m] = 1;
+                noNext = true;
+                roundCounter++;
+                System.out.println("RC: " + roundCounter);
+                break;
+              }
             }
           }
-
+          if (!noNext) // if there STILL isn't a 1
+            gameover(false);
         }
         break;
       }
@@ -528,8 +503,7 @@ public class ChatServer extends AbstractServer {
 
   }
 
-  // Sends to all clients who are currently in the game (sendToAllClients would include people who
-  // haven't selected play game)
+  // Sends to all clients who are currently in the game
   public void sendToGameClients(Object obj) {
 
     for (int i = 0; i < clients.size(); i++) {

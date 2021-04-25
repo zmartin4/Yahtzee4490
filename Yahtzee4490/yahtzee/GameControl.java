@@ -68,15 +68,12 @@ public class GameControl implements ActionListener, ItemListener {
       } catch (IOException e) {
         e.printStackTrace();
       }
-
       CardLayout cardLayout = (CardLayout) container.getLayout();
       cardLayout.show(container, "4");
-
     }
 
     if (!allowInput)
       return;
-
 
 
     if (command == "Roll Dice" && rollCount < 3) {
@@ -139,7 +136,6 @@ public class GameControl implements ActionListener, ItemListener {
       int category = selectionTranslation(selection);
       finalScore[category] = currScore[category];
 
-
       calculateOthers();
 
       // Resets the board for the user when turn is over
@@ -150,8 +146,6 @@ public class GameControl implements ActionListener, ItemListener {
         rollable[i] = true;
       }
 
-
-
       GameData data = new GameData(finalScore, diceValues, rollable);
       try {
         client.sendToServer(data);
@@ -159,8 +153,6 @@ public class GameControl implements ActionListener, ItemListener {
         e.printStackTrace();
       }
       sendData = false;
-
-
 
     }
 
@@ -172,10 +164,8 @@ public class GameControl implements ActionListener, ItemListener {
       } catch (IOException e) {
         e.printStackTrace();
       }
-
       if (rollCount == 3)
         sendData = false;
-
     }
 
   }
@@ -203,7 +193,6 @@ public class GameControl implements ActionListener, ItemListener {
   public void setOppUsernames(ArrayList<String> oppUsernames) {
     GamePanel gamePanel = (GamePanel) container.getComponent(4);
     gamePanel.setOppName(oppUsernames);
-
   }
 
   // Allows for a client to interact with the GUI || Pre-Turn ||
@@ -223,10 +212,8 @@ public class GameControl implements ActionListener, ItemListener {
   public void lobbyMessage() {
     GamePanel gamePanel = (GamePanel) container.getComponent(4);
     gamePanel.showGameMessage("Everyone else left the lobby. Returning to Main Menu");
-
     CardLayout cardLayout = (CardLayout) container.getLayout();
     cardLayout.show(container, "4");
-
   }
 
   // Sets which client the GameData came from || Post-Turn ||
@@ -250,22 +237,22 @@ public class GameControl implements ActionListener, ItemListener {
     int num = -1;
 
     switch (cat) {
-      case "One":
+      case "Ones":
         num = 1;
         break;
-      case "Two":
+      case "Twos":
         num = 2;
         break;
-      case "Three":
+      case "Threes":
         num = 3;
         break;
-      case "Four":
+      case "Fours":
         num = 4;
         break;
-      case "Five":
+      case "Fives":
         num = 5;
         break;
-      case "Six":
+      case "Sixes":
         num = 6;
         break;
       case "Three of a Kind":

@@ -22,7 +22,7 @@ import javax.swing.JPanel;
 public class GamePanel extends JPanel {
 
 
-  int numOpps;
+
   // Dices for the rollable and non-rollable location
   private JButton dice1Keep = new JButton("1Keep");
   private JButton dice1Roll = new JButton("1Roll");
@@ -36,7 +36,6 @@ public class GamePanel extends JPanel {
   private JButton dice5Roll = new JButton("5Roll");
   ImageIcon bgTable;
 
-  ArrayList<Integer> player = new ArrayList<Integer>();
 
   // Faces for the dice
   private ImageIcon face1 =
@@ -53,6 +52,7 @@ public class GamePanel extends JPanel {
       new ImageIcon(this.getClass().getResource("/yahtzee/images/face_6.png"));
   private ImageIcon blank =
       new ImageIcon(this.getClass().getResource("/yahtzee/images/board_color.png"));
+
 
   // Creates button for each category for the user of the scoreboard
   private JButton[] userScoreButtons = new JButton[17];
@@ -74,7 +74,7 @@ public class GamePanel extends JPanel {
   private JButton bonus2User = new JButton("");
   private JButton totalUser = new JButton("");
 
-  ArrayList<JButton[]> oppScore = new ArrayList<JButton[]>();
+  private ArrayList<JButton[]> oppScore = new ArrayList<JButton[]>();
   private JButton[] oppScoreButtons;
   private JButton nameOpp;
   private JButton oneOpp;
@@ -121,34 +121,34 @@ public class GamePanel extends JPanel {
   JButton chooseCategory;
   JButton quitButton;
   JComboBox pickCategory;
+
   int orderNum;
+  int numOpps;
 
 
 
   ArrayList<String> categorySelection = new ArrayList<String>();
-  final String[] categorySelectionsFINAL = {"One", "Two", "Three", "Four", "Five", "Six",
+  final String[] categorySelectionsFINAL = {"Ones", "Twos", "Threes", "Fours", "Fives", "Sixes",
       "Three of a Kind", "Four of a Kind", "Full House", "Small Straight", "Large Straight",
       "Yahtzee", "Chance", "Select Categeory"}; // Starting category label names
 
-
-
-  GridBagConstraints catC = new GridBagConstraints();
-  JPanel catP = new JPanel(new GridBagLayout());
-  JPanel scoresPanel = new JPanel(new GridBagLayout());
-  GridBagConstraints scoreC = new GridBagConstraints();
-  JPanel scoreboardPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-  JPanel layoutPanel = new JPanel(new BorderLayout(40, 25));
-
-  JPanel diceControlPanel = new JPanel();
-
-
-
   // Dice Interaction Panel
+  JPanel layoutPanel = new JPanel(new BorderLayout(40, 25));
   JPanel playPanel = new JPanel(new BorderLayout());
+  JPanel scoresPanel = new JPanel(new GridBagLayout());
+  JPanel scoreboardPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+  JPanel diceControlPanel = new JPanel();
+  JPanel catP = new JPanel(new GridBagLayout());
+  GridBagConstraints catC = new GridBagConstraints();
+  GridBagConstraints scoreC = new GridBagConstraints();
+  JPanel categoriesPanel = new JPanel(new GridLayout(17, 0, 10, 5));
+  JPanel quitPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+  GridBagConstraints c = new GridBagConstraints();
+  JPanel dicePanel = new JPanel(new GridBagLayout());
 
   // Style Constants
   Font catFont = new Font("Arial", Font.BOLD, 20);
-  Font nameFont = new Font("Arial", Font.PLAIN, 14);
+  Font nameFont = new Font("Arial", Font.BOLD, 14);
   Font buttonFont = new Font("Arial", Font.BOLD, 32);
   Color yRed = new Color(215, 45, 53);
   Color yourTurn = new Color(160, 230, 255);
@@ -445,24 +445,12 @@ public class GamePanel extends JPanel {
   }
 
   public void resetScoreboard() {
-
     categorySelection.clear();
     for (String categories : categorySelectionsFINAL)
       categorySelection.add(categories);
     setUserScoreboard();
-
-    for (int i = 0; i < oppScore.size(); i++) {
-      for (int j = 0; j < oppScore.get(i).length; j++) {
-        // oppScore.get(i)[j].setText("");
-      }
-    }
     oppScore.clear();
-
-
     removeCategorySelection("");
-
-
-
   }
 
   ////////////////////////////////////////////////////
@@ -488,11 +476,15 @@ public class GamePanel extends JPanel {
   // Called Internally from GameControl
   // Updates the users scoreboard values as dice are being thrown
   public void updateUserScoreboard(Integer[] userScore, Integer[] finalScore) {
-    for (int i = 0; i < oppScore.size(); i++) {
-      for (int j = 1; j < oppScore.get(i).length; j++) {
-        oppScore.get(i)[j].setBackground(yourTurn);
-      }
+    // for (int i = 0; i < oppScore.size(); i++) {
+    // for (int j = 1; j < oppScore.get(i).length; j++) {
+    // oppScore.get(i)[j].setBackground(yourTurn);
+    // }
+    // }
+    for (int i = 1; i < userScore.length; i++) {
+      // userScoreButtons[i].setBackground(yourTurn);
     }
+
 
     // Add all scores to userScoreboard
     for (int i = 1; i < userScore.length; i++) {
@@ -516,6 +508,9 @@ public class GamePanel extends JPanel {
   // Called from GameControl from the ChatServer
   // Updates the state of the dice and the opps scoreboard once a category is submitted
   public void updateOppGame(Object arg0, String whosData) {
+
+    System.out.println("whos Data: " + whosData);
+    System.out.println(oppScore.get(0)[0].getText());
     GameData currentGameData = (GameData) arg0;
     Integer[] diceValue = currentGameData.getDiceValues();
     Boolean[] rollable = currentGameData.getRollable();
@@ -544,8 +539,17 @@ public class GamePanel extends JPanel {
   public void setTurnIndicator() {
     for (int i = 1; i < userScoreButtons.length; i++)
       userScoreButtons[i].setBackground(yourTurn);
+
+    for (int i = 0; i < oppScore.size(); i++) {
+      for (int j = 1; j < oppScore.get(i).length; j++) {
+        oppScore.get(i)[j].setBackground(Color.WHITE);
+      }
+    }
+
+
   }
 
+  // Sets message in gamePanel
   public void showGameMessage(String msg) {
     JOptionPane.showMessageDialog(null, msg);
   }
@@ -562,7 +566,6 @@ public class GamePanel extends JPanel {
       }
     }
   }
-
 
   // Removes the chosen category from the JComboBox
   public void removeCategorySelection(String selection) {
@@ -589,30 +592,9 @@ public class GamePanel extends JPanel {
     setCategoryButtons();
     setUserScoreboard();
 
-
-    // Overall Panel
-
-
-    // Scoreboard Panels
-
-    JPanel categoriesPanel = new JPanel(new GridLayout(17, 0, 10, 5));
-
-    JPanel quitPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-
-
-    GridBagConstraints c = new GridBagConstraints();
-    JPanel dicePanel = new JPanel(new GridBagLayout());
-
     scoreboardPanel.setBackground(Color.LIGHT_GRAY);
     categoriesPanel.setBackground(Color.LIGHT_GRAY);
     scoreboardPanel.add(catP);
-
-
-
-    // Category Labels for Scoreboard
-
-
 
     //////////////////////////
     /* Buttons for the Dice */
@@ -762,8 +744,5 @@ public class GamePanel extends JPanel {
     layoutPanel.add(quitPanel, BorderLayout.PAGE_START);
 
   }
-
-
-
 }
 

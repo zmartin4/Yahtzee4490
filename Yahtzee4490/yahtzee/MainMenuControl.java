@@ -33,15 +33,13 @@ public class MainMenuControl implements ActionListener {
         e.printStackTrace();
       }
 
-
     } else if (command == "Leaderboard") {
       try {
         client.sendToServer("Get Leaderboard Stats");
       } catch (IOException e) {
         e.printStackTrace();
       }
-      // CardLayout cardLayout = (CardLayout) container.getLayout();
-      // cardLayout.show(container, "6");
+
     } else if (command == "Log Out") {
       try {
         client.sendToServer("Logged Out");
@@ -50,7 +48,6 @@ public class MainMenuControl implements ActionListener {
       }
       CardLayout cardLayout = (CardLayout) container.getLayout();
       cardLayout.show(container, "2");
-
     }
 
   }

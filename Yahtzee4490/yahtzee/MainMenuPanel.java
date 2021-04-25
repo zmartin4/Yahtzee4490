@@ -24,7 +24,6 @@ public class MainMenuPanel extends JPanel {
     Font logoutFont = new Font("Arial", Font.PLAIN, 24);
 
     // Layout Initialization
-
     JPanel buttonPanel = new JPanel(new GridLayout(3, 1, 50, 50)); // Contains Buttons
     JPanel logoutPanel = new JPanel(new FlowLayout()); // Contains logout Button
     JLabel bufferPanel = new JLabel(); // Spacing for GUI
