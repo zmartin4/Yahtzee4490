@@ -279,15 +279,16 @@ public class GamePanel extends JPanel {
   ///// INITIAL SCOREBOARD SETUPS /////
   /////////////////////////////////////////
   public void setNumOpps(int num) {
+    resetScoreboard();
+
     oppScore = new ArrayList<JButton[]>();
     numOpps = num;
-
+    numOpps = num;
     setOppScoreboard();
     scoreboardPanel.add(scoresPanel);
-    layoutPanel.add(scoreboardPanel, BorderLayout.LINE_START);
-    layoutPanel.add(playPanel, BorderLayout.LINE_END);
 
-    this.add(layoutPanel);
+
+
   }
 
   public void setCategoryButtons() {
@@ -440,6 +441,7 @@ public class GamePanel extends JPanel {
         scoresPanel.add(oppScoreButtons[j], scoreC);
         spacing = spacing + 5;
       }
+      System.out.println();
     }
 
   }
@@ -448,9 +450,17 @@ public class GamePanel extends JPanel {
     categorySelection.clear();
     for (String categories : categorySelectionsFINAL)
       categorySelection.add(categories);
+
+    for (int i = 0; i < oppScore.size(); i++) {
+      for (int j = 1; j < oppScore.get(i).length; j++) {
+        oppScore.get(i)[j].setBackground(Color.white);
+        oppScore.get(i)[j].setText("");
+      }
+    }
+    scoresPanel.removeAll();
     setUserScoreboard();
-    oppScore.clear();
     removeCategorySelection("");
+
   }
 
   ////////////////////////////////////////////////////
@@ -526,8 +536,6 @@ public class GamePanel extends JPanel {
         }
       }
     }
-
-
     setDice1(rollable[0], diceValue[0]);
     setDice2(rollable[1], diceValue[1]);
     setDice3(rollable[2], diceValue[2]);
@@ -741,8 +749,10 @@ public class GamePanel extends JPanel {
     playPanel.add(diceControlPanel, BorderLayout.PAGE_END);
 
     // add all panels
+    layoutPanel.add(scoreboardPanel, BorderLayout.LINE_START);
+    layoutPanel.add(playPanel, BorderLayout.LINE_END);
     layoutPanel.add(quitPanel, BorderLayout.PAGE_START);
-
+    this.add(layoutPanel);
   }
 }
 

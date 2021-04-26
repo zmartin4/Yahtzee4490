@@ -31,15 +31,15 @@ public class ServerGUI extends JFrame {
   private JPanel panel;
 
 
-  private ChatServer server;
-  // private YahtzeeServer server;
+  // private ChatServer server;
+  private YahtzeeServer server;
 
   public ServerGUI() {
     int i = 0;
     final int midBound0 = 175;
     final int midBound1 = 275;
 
-    server = new ChatServer();
+    server = new YahtzeeServer();
     // server = new YahtzeeServer();
     setTitle("server");
     setSize(600, 500);

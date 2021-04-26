@@ -72,10 +72,10 @@ public class ChatClient extends AbstractClient {
       ////// Yahtzee Game Flow Control //////
     } else if (arg0.equals("Go")) { // Allows a client to interact with GamePanel
       gc.goTurn();
-      System.out.println("Go");
+      // System.out.println("Go");
     } else if (arg0.equals("Wait")) { // Does not allow client interaction with GamePanel
       gc.waitTurn();
-      System.out.println("Wait");
+      // System.out.println("Wait");
     } else if (arg0.equals("Lobby Size Error")) { // Does not allow client interaction with
                                                   // GamePanel
       gc.lobbyMessage();

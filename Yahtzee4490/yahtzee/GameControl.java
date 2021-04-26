@@ -41,17 +41,18 @@ public class GameControl implements ActionListener, ItemListener {
   }
 
   public void gameReset() {
+    CardLayout cardLayout = (CardLayout) container.getLayout();
+    cardLayout.show(container, "4");
     GamePanel gamePanel = (GamePanel) container.getComponent(4);
     Arrays.fill(finalScore, -1);
     Arrays.fill(diceValues, 1);
     Arrays.fill(rollable, true);
-    gamePanel.showGameMessage("Game Over. Returning to Main Menu");
     gamePanel.resetUserScoreboard(finalScore);
     gamePanel.resetScoreboard();
     sendData = true;
     allowInput = false;
-    CardLayout cardLayout = (CardLayout) container.getLayout();
-    cardLayout.show(container, "4");
+    gamePanel.showGameMessage("Game Over. Returning to Main Menu");
+
 
   }
 
@@ -63,6 +64,7 @@ public class GameControl implements ActionListener, ItemListener {
     GamePanel gamePanel = (GamePanel) container.getComponent(4);
 
     if (command.equals("Quit Game")) {
+      gameReset();
       try {
         client.sendToServer("Quit Game");
       } catch (IOException e) {
@@ -179,6 +181,7 @@ public class GameControl implements ActionListener, ItemListener {
   public void setNumOpps(int num) {
     GamePanel gamePanel = (GamePanel) container.getComponent(4);
     gamePanel.setNumOpps(num);
+
   }
 
   // Only called once right after login || Pre-Game Setup ||
