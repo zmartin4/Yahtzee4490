@@ -17,10 +17,10 @@ public class GameControl implements ActionListener, ItemListener {
   private JPanel container;
   private ChatClient client;
 
-  private Integer[] diceValues = new Integer[5];
-  private Boolean[] rollable = new Boolean[5];
-  private Integer[] currScore = new Integer[17];
-  private Integer[] finalScore = new Integer[17];
+  public Integer[] diceValues = new Integer[5];
+  public Boolean[] rollable = new Boolean[5];
+  protected Integer[] currScore = new Integer[17];
+  protected Integer[] finalScore = new Integer[17];
   private String selection = "";
 
 
@@ -30,7 +30,7 @@ public class GameControl implements ActionListener, ItemListener {
   boolean allowInput = false;
   Random rand = new Random();
 
-  // Constructor for the login controller.
+
   public GameControl(JPanel container, ChatClient client) {
     this.container = container;
     this.client = client;
@@ -40,6 +40,7 @@ public class GameControl implements ActionListener, ItemListener {
     Arrays.fill(rollable, true);
   }
 
+  // Resets objects back to their original state when a game concludes
   public void gameReset() {
     CardLayout cardLayout = (CardLayout) container.getLayout();
     cardLayout.show(container, "4");
@@ -52,8 +53,6 @@ public class GameControl implements ActionListener, ItemListener {
     sendData = true;
     allowInput = false;
     gamePanel.showGameMessage("Game Over. Returning to Main Menu");
-
-
   }
 
   // Listens for change in the GUI's state
@@ -286,7 +285,7 @@ public class GameControl implements ActionListener, ItemListener {
   }
 
   // Rolls the dice that are selected to be rolled
-  private void rollDice() {
+  protected void rollDice() {
     int rand_int = 0;
     for (int i = 0; i < diceValues.length; i++) {
       if (rollable[i] == true) {
@@ -310,7 +309,7 @@ public class GameControl implements ActionListener, ItemListener {
   }
 
   // Calculates the Score of the Dice and updates the GUI's Scoreboard
-  private void calculateScore() {
+  protected void calculateScore() {
     Arrays.fill(currScore, 0);
 
     // Single number Scores
@@ -391,7 +390,8 @@ public class GameControl implements ActionListener, ItemListener {
   }
 
   // Calculates the Bonus
-  private void calculateOthers() {
+  protected void calculateOthers() {
+
     int b1 = 0;
     Boolean b = true;
 
@@ -410,11 +410,11 @@ public class GameControl implements ActionListener, ItemListener {
         finalScore[7] = 0;
     }
 
-    if (currScore[14] == 50) {
-      if (finalScore[15] == -1) {
+    if (currScore[13] == 50) {
+      if (finalScore[13] == 0)
         finalScore[15] = 0;
-      }
-      finalScore[15] += 100;
+      else
+        finalScore[15] += 100;
     }
 
     int total = 0;
@@ -426,6 +426,12 @@ public class GameControl implements ActionListener, ItemListener {
 
 
 
+  }
+
+  public void setDice(Boolean[] rollable, Integer[] diceValues) {
+    this.diceValues = diceValues;
+    this.rollable = rollable;
+    System.out.println("hi");
   }
 
 

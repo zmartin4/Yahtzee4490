@@ -22,7 +22,6 @@ import javax.swing.JPanel;
 public class GamePanel extends JPanel {
 
 
-
   // Dices for the rollable and non-rollable location
   private JButton dice1Keep = new JButton("1Keep");
   private JButton dice1Roll = new JButton("1Roll");
@@ -280,15 +279,9 @@ public class GamePanel extends JPanel {
   /////////////////////////////////////////
   public void setNumOpps(int num) {
     resetScoreboard();
-
     oppScore = new ArrayList<JButton[]>();
     numOpps = num;
-    numOpps = num;
     setOppScoreboard();
-    scoreboardPanel.add(scoresPanel);
-
-
-
   }
 
   public void setCategoryButtons() {
@@ -369,7 +362,8 @@ public class GamePanel extends JPanel {
 
     int spacing = 0;
     for (int i = 0; i < userScoreButtons.length; i++) {
-      userScoreButtons[i].setFont(catFont);
+      if (i != 0)
+        userScoreButtons[i].setFont(catFont);
       userScoreButtons[i].setPreferredSize(new Dimension(75, 35));
       userScoreButtons[i].setBackground(Color.white);
 
@@ -428,6 +422,7 @@ public class GamePanel extends JPanel {
 
       int spacing = 0;
       for (int j = 0; j < oppScoreButtons.length; j++) {
+
         oppScoreButtons[j].setFont(catFont);
         oppScoreButtons[j].setPreferredSize(new Dimension(75, 35));
         oppScoreButtons[j].setBackground(Color.white);
@@ -446,6 +441,7 @@ public class GamePanel extends JPanel {
 
   }
 
+  // Resets objects back to their original state when a game concludes
   public void resetScoreboard() {
     categorySelection.clear();
     for (String categories : categorySelectionsFINAL)
@@ -465,7 +461,7 @@ public class GamePanel extends JPanel {
 
   ////////////////////////////////////////////////////
   ///// Sets Names on the Top of Scoreboard /////
-  //////////////////////////////////////////////////
+  ///////////////////////////////////////////////////
 
   public void setUserName(String username) {
     nameUser.setText(username);
@@ -474,7 +470,6 @@ public class GamePanel extends JPanel {
 
   public void setOppName(Object oppName) {
     ArrayList<String> oppNames = (ArrayList<String>) oppName;
-
     for (int i = 0; i < oppNames.size(); i++) {
       System.out.println(oppNames.get(i));
       oppScore.get(i)[0].setText(oppNames.get(i));
@@ -519,8 +514,6 @@ public class GamePanel extends JPanel {
   // Updates the state of the dice and the opps scoreboard once a category is submitted
   public void updateOppGame(Object arg0, String whosData) {
 
-    System.out.println("whos Data: " + whosData);
-    System.out.println(oppScore.get(0)[0].getText());
     GameData currentGameData = (GameData) arg0;
     Integer[] diceValue = currentGameData.getDiceValues();
     Boolean[] rollable = currentGameData.getRollable();
@@ -736,6 +729,7 @@ public class GamePanel extends JPanel {
 
     // adding sections to the scoreboard
     scoreboardPanel.add(categoriesPanel);
+    scoreboardPanel.add(scoresPanel);
     quitPanel.add(quitButton);
 
     // add dice selection

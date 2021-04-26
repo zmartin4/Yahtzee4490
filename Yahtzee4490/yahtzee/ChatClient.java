@@ -35,7 +35,6 @@ public class ChatClient extends AbstractClient {
     } else if (arg0.equals("ALI")) {// If account login failed
       lc.displayError("That user has already logged in");
 
-
       ////// Main Menu Redirection //////
     } else if (arg0.equals("New Lobby")) { // If the first person to select New Game
       mmc.newLobby();

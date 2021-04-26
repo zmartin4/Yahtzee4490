@@ -163,7 +163,6 @@ public class YahtzeeServer extends AbstractServer {
               arg1.setName(loginData.getUsername()); // Sets the ThreadName to the Username entered
               loggedInClients.add(arg1.getName());
 
-
             } catch (IOException e) {
               e.printStackTrace();
             }
@@ -351,6 +350,8 @@ public class YahtzeeServer extends AbstractServer {
         String[][] scoreboardData = new String[highscoreData.size()][2];
 
         for (int i = 0; i < highscoreData.size(); i++) {
+          if (usernameData.get(i).equals("TestUser"))
+            continue;
           scoreboardData[i][0] = usernameData.get(i);
           scoreboardData[i][1] = highscoreData.get(i);
         }
