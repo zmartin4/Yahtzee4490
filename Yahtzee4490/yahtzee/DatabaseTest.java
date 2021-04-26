@@ -31,24 +31,48 @@ public class DatabaseTest {
   @Test
   public void testBonus2() throws NoSuchFieldException, SecurityException {
     final GameControl gcTest = new GameControl(gpTest, null);
+    GamePanel gp = new GamePanel(gcTest);
+
+
     Boolean[] rollable = {false, true, true, false, true};
     Integer[] diceValues = {5, 5, 5, 5, 5};
     Integer[] finalScore = new Integer[17];
     Integer[] currScore = new Integer[17];
-
     Arrays.fill(finalScore, -1);
     Arrays.fill(currScore, 0);
-    finalScore[13] = 150;
 
+    finalScore[13] = 0;
 
-
+    gcTest.gamePanel = gp;
     gcTest.diceValues = diceValues;
     gcTest.finalScore = finalScore;
     gcTest.currScore = currScore;
+
     gcTest.calculateScore();
     gcTest.calculateOthers();
-    assertEquals("Make sure Score calculations are correct", (int) gcTest.finalScore[13], 150);
-    // How can we get to the GamePanel through Testing?
+
+    assertEquals("When Yahtzee category is already picked as 0", (int) gcTest.finalScore[15], 0);
+
+
+
+    finalScore[13] = 50;
+    finalScore[15] = -1;
+    gcTest.finalScore = finalScore;
+    gcTest.calculateScore();
+    gcTest.calculateOthers();
+
+    assertEquals("When Yahtzee category has been filled already", (int) gcTest.finalScore[15], 100);
+
+
+
+    finalScore[15] = 100;
+    gcTest.finalScore = finalScore;
+    gcTest.calculateScore();
+    gcTest.calculateOthers();
+    System.out.println(gp.userScoreButtons[15].getText());
+    assertEquals("When Yahtzee category and bonus has been filled once",
+        (int) gcTest.finalScore[15], 200);
+    System.out.println(gp.userScoreButtons[15].getText());
 
 
   }
@@ -56,7 +80,7 @@ public class DatabaseTest {
   @Test
   public void testExecuteDML() throws SQLException {
     db.executeDML(
-        "INSERT INTO TheUser VALUES('TestUser', AES_ENCRYPT('TestPassword', 'secretkey'), 0)");
+        "INSERT INTO TheUser VALUES('TestUser1', AES_ENCRYPT('TestPassword', 'secretkey'), 0)");
 
   }
 

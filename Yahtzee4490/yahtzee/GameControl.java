@@ -14,11 +14,11 @@ import javax.swing.JPanel;
 
 
 public class GameControl implements ActionListener, ItemListener {
-  private JPanel container;
+  protected JPanel container;
   private ChatClient client;
 
-  public Integer[] diceValues = new Integer[5];
-  public Boolean[] rollable = new Boolean[5];
+  protected Integer[] diceValues = new Integer[5];
+  protected Boolean[] rollable = new Boolean[5];
   protected Integer[] currScore = new Integer[17];
   protected Integer[] finalScore = new Integer[17];
   private String selection = "";
@@ -29,6 +29,7 @@ public class GameControl implements ActionListener, ItemListener {
   boolean sendData = true;
   boolean allowInput = false;
   Random rand = new Random();
+  GamePanel gamePanel;
 
 
   public GameControl(JPanel container, ChatClient client) {
@@ -137,7 +138,7 @@ public class GameControl implements ActionListener, ItemListener {
       int category = selectionTranslation(selection);
       finalScore[category] = currScore[category];
 
-      calculateOthers();
+      // calculateOthers();
 
       // Resets the board for the user when turn is over
       gamePanel.removeCategorySelection(selection);
@@ -306,10 +307,12 @@ public class GameControl implements ActionListener, ItemListener {
     gamePanel.setDice4(rollable[3], diceValues[3]);
     gamePanel.setDice5(rollable[4], diceValues[4]);
     calculateScore();
+    calculateOthers();
   }
 
   // Calculates the Score of the Dice and updates the GUI's Scoreboard
   protected void calculateScore() {
+
     Arrays.fill(currScore, 0);
 
     // Single number Scores
@@ -384,9 +387,8 @@ public class GameControl implements ActionListener, ItemListener {
     }
 
 
-
-    GamePanel gamePanel = (GamePanel) container.getComponent(4);
-    gamePanel.updateUserScoreboard(currScore, finalScore);
+    // gamePanel = (GamePanel) container.getComponent(4); // Disable when doing JUnit Testing
+    // gamePanel.updateUserScoreboard(currScore, finalScore);
   }
 
   // Calculates the Bonus
@@ -413,8 +415,10 @@ public class GameControl implements ActionListener, ItemListener {
     if (currScore[13] == 50) {
       if (finalScore[13] == 0)
         finalScore[15] = 0;
-      else
+      else if (finalScore[13] == 50)
         finalScore[15] += 100;
+      if (finalScore[15] == 99)
+        finalScore[15] += 1;
     }
 
     int total = 0;
@@ -423,6 +427,9 @@ public class GameControl implements ActionListener, ItemListener {
         total += finalScore[i];
     }
     finalScore[16] = total;
+
+    gamePanel = (GamePanel) container.getComponent(4); // Disable when doing JUnit Testing
+    gamePanel.updateUserScoreboard(currScore, finalScore);
 
 
 

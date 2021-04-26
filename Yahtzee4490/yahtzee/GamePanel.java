@@ -54,7 +54,7 @@ public class GamePanel extends JPanel {
 
 
   // Creates button for each category for the user of the scoreboard
-  private JButton[] userScoreButtons = new JButton[17];
+  protected JButton[] userScoreButtons = new JButton[17];
   private JButton nameUser = new JButton("");
   private JButton oneUser = new JButton("");
   private JButton twoUser = new JButton("");
@@ -436,7 +436,6 @@ public class GamePanel extends JPanel {
         scoresPanel.add(oppScoreButtons[j], scoreC);
         spacing = spacing + 5;
       }
-      System.out.println();
     }
 
   }
@@ -471,7 +470,7 @@ public class GamePanel extends JPanel {
   public void setOppName(Object oppName) {
     ArrayList<String> oppNames = (ArrayList<String>) oppName;
     for (int i = 0; i < oppNames.size(); i++) {
-      System.out.println(oppNames.get(i));
+
       oppScore.get(i)[0].setText(oppNames.get(i));
       oppScore.get(i)[0].setFont(nameFont);
     }
@@ -481,15 +480,6 @@ public class GamePanel extends JPanel {
   // Called Internally from GameControl
   // Updates the users scoreboard values as dice are being thrown
   public void updateUserScoreboard(Integer[] userScore, Integer[] finalScore) {
-    // for (int i = 0; i < oppScore.size(); i++) {
-    // for (int j = 1; j < oppScore.get(i).length; j++) {
-    // oppScore.get(i)[j].setBackground(yourTurn);
-    // }
-    // }
-    for (int i = 1; i < userScore.length; i++) {
-      // userScoreButtons[i].setBackground(yourTurn);
-    }
-
 
     // Add all scores to userScoreboard
     for (int i = 1; i < userScore.length; i++) {
@@ -498,14 +488,16 @@ public class GamePanel extends JPanel {
         continue;
       userScoreButtons[i].setText(String.valueOf(userScore[i]));
       userScoreButtons[i].setForeground(Color.red);
+      System.out.println(i + "   " + userScore[i]);
     }
 
-
+    System.out.println();
     // Overrides and adds previously selected categories
     for (int i = 1; i < finalScore.length; i++) {
       if (finalScore[i] != -1) {
         userScoreButtons[i].setText(String.valueOf(finalScore[i]));
         userScoreButtons[i].setForeground(Color.black);
+        System.out.println(i + " " + finalScore[i]);
       }
     }
   }
