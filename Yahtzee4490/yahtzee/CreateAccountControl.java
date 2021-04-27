@@ -45,7 +45,7 @@ public class CreateAccountControl implements ActionListener {
       } else if (!data.getPassword().equals(data.getVerifyPassword())) {
         displayError("Both Passwords must be the same.");
         return;
-      } else if (data.getPassword().length() < 0) {
+      } else if (data.getPassword().length() < 5) {
         displayError("Password must be at least 6 characters ");
         return;
       }
