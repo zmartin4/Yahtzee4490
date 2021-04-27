@@ -488,16 +488,16 @@ public class GamePanel extends JPanel {
         continue;
       userScoreButtons[i].setText(String.valueOf(userScore[i]));
       userScoreButtons[i].setForeground(Color.red);
-      System.out.println(i + "   " + userScore[i]);
+
     }
 
-    System.out.println();
+
     // Overrides and adds previously selected categories
     for (int i = 1; i < finalScore.length; i++) {
       if (finalScore[i] != -1) {
         userScoreButtons[i].setText(String.valueOf(finalScore[i]));
         userScoreButtons[i].setForeground(Color.black);
-        System.out.println(i + " " + finalScore[i]);
+
       }
     }
   }

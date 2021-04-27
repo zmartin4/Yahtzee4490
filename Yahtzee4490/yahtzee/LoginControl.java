@@ -9,11 +9,11 @@ import javax.swing.JPanel;
 public class LoginControl implements ActionListener {
   // Private data fields for the container and chat client.
   private JPanel container;
-  private ChatClient client;
+  private YahtzeeClient client;
 
 
   // Constructor for the login controller.
-  public LoginControl(JPanel container, ChatClient client) {
+  public LoginControl(JPanel container, YahtzeeClient client) {
     this.container = container;
     this.client = client;
   }

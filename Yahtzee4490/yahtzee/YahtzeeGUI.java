@@ -9,12 +9,12 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 
-public class ClientGUI extends JFrame {
+public class YahtzeeGUI extends JFrame {
 
 
   // Constructor that creates the client GUI.
-  public ClientGUI(String host, String port) {
-    ChatClient client = new ChatClient();
+  public YahtzeeGUI(String host, String port) {
+    YahtzeeClient client = new YahtzeeClient();
 
     client.setHost(host);
     client.setPort(Integer.parseInt(port));
@@ -95,6 +95,6 @@ public class ClientGUI extends JFrame {
 
   // Main function that creates the client GUI when the program is started.
   public static void main(String[] args) {
-    new ClientGUI(args[0], args[1]);
+    new YahtzeeGUI(args[0], args[1]);
   }
 }

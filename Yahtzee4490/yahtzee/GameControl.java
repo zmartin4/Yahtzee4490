@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 
 public class GameControl implements ActionListener, ItemListener {
   protected JPanel container;
-  private ChatClient client;
+  private YahtzeeClient client;
 
   protected Integer[] diceValues = new Integer[5];
   protected Boolean[] rollable = new Boolean[5];
@@ -32,7 +32,7 @@ public class GameControl implements ActionListener, ItemListener {
   GamePanel gamePanel;
 
 
-  public GameControl(JPanel container, ChatClient client) {
+  public GameControl(JPanel container, YahtzeeClient client) {
     this.container = container;
     this.client = client;
 
@@ -386,9 +386,6 @@ public class GameControl implements ActionListener, ItemListener {
       }
     }
 
-
-    // gamePanel = (GamePanel) container.getComponent(4); // Disable when doing JUnit Testing
-    // gamePanel.updateUserScoreboard(currScore, finalScore);
   }
 
   // Calculates the Bonus

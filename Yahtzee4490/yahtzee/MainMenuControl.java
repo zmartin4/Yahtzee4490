@@ -9,11 +9,11 @@ import javax.swing.JPanel;
 public class MainMenuControl implements ActionListener {
 
   private JPanel container;
-  private ChatClient client;
+  private YahtzeeClient client;
   private String numPlayers;
 
 
-  public MainMenuControl(JPanel container, ChatClient client) {
+  public MainMenuControl(JPanel container, YahtzeeClient client) {
     this.container = container;
     this.client = client;
   }

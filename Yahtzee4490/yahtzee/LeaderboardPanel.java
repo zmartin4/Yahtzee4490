@@ -79,21 +79,29 @@ public class LeaderboardPanel extends JPanel {
   }
 
   public void showLeaderboardData(String[][] leaderboardData) {
-
+    int dataLen = leaderboardData.length;
     for (int i = 0; i < 6; i++) {
-      System.out.println(leaderboardData[i][0] + " " + leaderboardData[i][1]);
+      String userT = "";
+      String scoreT = "";
+      if (i < dataLen) {
+        userT = leaderboardData[i][0];
+        scoreT = leaderboardData[i][1];
+      }
+
+
+
       c.gridx = 0;
       c.gridy = i;
       c.insets = new Insets(10, 40, 10, 40);
       username[i] = new JButton();
-      username[i].setText(leaderboardData[i][0]);
+      username[i].setText(userT);
       username[i].setPreferredSize(size);
       username[i].setFont(lbFont);
       lbScores.add(username[i], c);
 
       c.gridx = 1;
       score[i] = new JButton();
-      score[i].setText(leaderboardData[i][1]);
+      score[i].setText(scoreT);
       score[i].setPreferredSize(size);
       score[i].setFont(lbFont);
       lbScores.add(score[i], c);

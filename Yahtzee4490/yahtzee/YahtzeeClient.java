@@ -3,7 +3,7 @@ package yahtzee;
 import java.util.ArrayList;
 import ocsf.client.AbstractClient;
 
-public class ChatClient extends AbstractClient {
+public class YahtzeeClient extends AbstractClient {
 
   LoginControl lc;
   CreateAccountControl cac;
@@ -17,7 +17,7 @@ public class ChatClient extends AbstractClient {
 
 
 
-  public ChatClient() {
+  public YahtzeeClient() {
     super("localhost", 8300);
 
   }

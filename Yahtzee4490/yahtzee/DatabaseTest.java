@@ -1,7 +1,6 @@
 package yahtzee;
 
 import static org.junit.Assert.assertEquals;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,13 +20,10 @@ public class DatabaseTest {
     db = new Database();
   }
 
-  @Test
-  public void testGUI() throws IOException, NoSuchFieldException, SecurityException,
-      IllegalArgumentException, IllegalAccessException {
 
 
-  }
-
+  // This validates that the bonus calculation works correctly given the various
+  // states of the yahtzee score and the bonus score
   @Test
   public void testBonus2() throws NoSuchFieldException, SecurityException {
     final GameControl gcTest = new GameControl(gpTest, null);
@@ -69,25 +65,27 @@ public class DatabaseTest {
     gcTest.finalScore = finalScore;
     gcTest.calculateScore();
     gcTest.calculateOthers();
-    System.out.println(gp.userScoreButtons[15].getText());
+
     assertEquals("When Yahtzee category and bonus has been filled once",
         (int) gcTest.finalScore[15], 200);
-    System.out.println(gp.userScoreButtons[15].getText());
+
 
 
   }
 
+  // Test to see if connected to the Database
   @Test
   public void testExecuteDML() throws SQLException {
     db.executeDML(
-        "INSERT INTO TheUser VALUES('TestUser1', AES_ENCRYPT('TestPassword', 'secretkey'), 0)");
-
+        "INSERT INTO TheUser VALUES('TestHighscore', AES_ENCRYPT('TestPassword', 'secretkey'), -1)");
   }
 
+  // Test whether the prevoius entry is able to be accessed
   @Test
   public void testExecuteQuery() throws SQLException {
     ArrayList<String> qHighscore =
         db.query("SELECT userHighscore FROM TheUser WHERE userName='TestHighscore'");
+
     assertEquals("Checking to see if it accessed the Highscore", qHighscore.get(0), "-1");
   }
 

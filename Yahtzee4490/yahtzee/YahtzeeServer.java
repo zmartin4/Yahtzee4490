@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import ocsf.server.AbstractServer;
@@ -348,22 +347,22 @@ public class YahtzeeServer extends AbstractServer {
         highscoreData = db.query(query);
 
         String[][] scoreboardData = new String[highscoreData.size()][2];
+        // Arrays.fill(scoreboardData[0], "");
+        // Arrays.fill(scoreboardData[1], "");
 
         for (int i = 0; i < highscoreData.size(); i++) {
-          if (usernameData.get(i).equals("TestUser"))
+          if (usernameData.get(i).equals("TestHighscore"))
             continue;
           scoreboardData[i][0] = usernameData.get(i);
           scoreboardData[i][1] = highscoreData.get(i);
+
         }
-
-        Arrays.sort(scoreboardData, new Comparator<String[]>() {
-
-          @Override
-          public int compare(final String[] first, final String[] second) {
-            return Double.valueOf(second[1]).compareTo(Double.valueOf(first[1]));
-          }
-        });
-
+        /*
+         * Arrays.sort(scoreboardData, new Comparator<String[]>() {
+         * 
+         * @Override public int compare(final String[] first, final String[] second) { return
+         * Double.valueOf(second[1]).compareTo(Double.valueOf(first[1])); } });
+         */
         try {
           arg1.sendToClient(scoreboardData);
         } catch (IOException e) {

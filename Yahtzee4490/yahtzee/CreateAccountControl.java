@@ -10,11 +10,11 @@ import javax.swing.JPanel;
 public class CreateAccountControl implements ActionListener {
 
   private JPanel container;
-  private ChatClient client;
+  private YahtzeeClient client;
 
 
   // Constructor for the login controller.
-  public CreateAccountControl(JPanel container, ChatClient client) {
+  public CreateAccountControl(JPanel container, YahtzeeClient client) {
     this.container = container;
     this.client = client;
   }
